@@ -30,9 +30,8 @@
                     <th>No. Resep</th>
                     <th>Pasien</th>
                     <th>Dokter</th>
-                    <th>Tgl Resep</th>
+                    <th>Tanggal Resep</th>
                     <th>Total Harga</th>
-                    <th>Status</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -44,25 +43,11 @@
                       <td><strong>RSP-<?= str_pad($r['id_resep'], 4, '0', STR_PAD_LEFT) ?></strong></td>
                       <td><?= esc($r['nama_pasien']) ?></td>
                       <td><?= esc($r['nama_dokter']) ?></td>
-                      <td><?= date('d/m/Y H:i', strtotime($r['tanggal_resep'])) ?></td>
+                      <td><?= date('d/m/Y', strtotime($r['tgl_resep'])) ?></td>
                       <td>Rp <?= number_format($r['total_harga'], 0, ',', '.') ?></td>
-                      <td>
-                        <?php
-                          $badge = ['menunggu' => 'warning', 'diproses' => 'info', 'selesai' => 'success'];
-                          $label = ['menunggu' => 'Menunggu', 'diproses' => 'Diproses', 'selesai' => 'Selesai'];
-                        ?>
-                        <span class="badge badge-<?= $badge[$r['status']] ?? 'secondary' ?>">
-                          <?= $label[$r['status']] ?? $r['status'] ?>
-                        </span>
-                      </td>
                       <td>
                         <a href="<?= base_url('resep/detail/'.$r['id_resep']) ?>"
                            class="btn btn-sm btn-outline-info" title="Detail"><i class="la la-eye"></i></a>
-                        <?php if ($r['status'] !== 'selesai'): ?>
-                        <button class="btn btn-sm btn-outline-success"
-                                onclick="updateStatus(<?= $r['id_resep'] ?>, '<?= $r['status'] ?>')"
-                                title="Update Status"><i class="la la-check"></i></button>
-                        <?php endif; ?>
                       </td>
                     </tr>
                     <?php endforeach; ?>
@@ -79,45 +64,5 @@
   </div>
 </div>
 
-<!-- Modal Update Status -->
-<div class="modal fade" id="modalStatus" tabindex="-1">
-  <div class="modal-dialog">
-    <form method="POST" id="formStatus">
-      <?= csrf_field() ?>
-      <div class="modal-content">
-        <div class="modal-header"><h5 class="modal-title">Update Status Resep</h5></div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label>Status</label>
-            <select name="status" class="form-control" id="selectStatus">
-              <option value="menunggu">Menunggu</option>
-              <option value="diproses">Diproses</option>
-              <option value="selesai">Selesai</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Catatan Apoteker</label>
-            <textarea name="catatan" class="form-control" rows="3" placeholder="Opsional..."></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-          <button type="submit" class="btn btn-primary">Simpan</button>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
-
-<?= $this->endSection() ?>
-
-<?= $this->section('scripts') ?>
-<script>
-function updateStatus(id, currentStatus) {
-  document.getElementById('formStatus').action = '<?= base_url('resep/update_status/') ?>' + id;
-  document.getElementById('selectStatus').value = currentStatus;
-  $('#modalStatus').modal('show');
-}
-</script>
 <?= $this->endSection() ?>
 

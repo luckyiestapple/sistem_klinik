@@ -30,23 +30,23 @@ class Auth extends BaseController
             // Sesuai request: Level 1 dan 3 (Admin dan Pegawai sama aja akses dashboard utama)
             $id_level = $user['id_level'];
             if ($id_level == 1 || $id_level == 3) {
-                return redirect()->to('/dashboard');
+                return redirect()->to(base_url('dashboard'));
             } elseif ($id_level == 2) {
-                return redirect()->to('/dashboard_pasien');
+                return redirect()->to(base_url('dashboard_pasien'));
             } elseif ($id_level == 4) {
-                return redirect()->to('/dashboard_dokter');
+                return redirect()->to(base_url('dashboard_dokter'));
             } else {
-                return redirect()->to('/dashboard'); // fallback
+                return redirect()->to(base_url('dashboard')); // fallback
             }
         } else {
             session()->setFlashdata('error', 'Username atau Password salah!');
-            return redirect()->to('/login');
+            return redirect()->to(base_url('login'));
         }
     }
 
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('/login');
+        return redirect()->to(base_url('login'));
     }
 }

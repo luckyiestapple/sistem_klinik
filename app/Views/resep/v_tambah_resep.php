@@ -22,7 +22,7 @@
           <div class="row">
             <div class="col-md-3"><strong>Pasien:</strong><br><?= esc($rekam_medis['nama_pasien']) ?></div>
             <div class="col-md-3"><strong>Dokter:</strong><br><?= esc($rekam_medis['nama_dokter']) ?></div>
-            <div class="col-md-3"><strong>Tgl Periksa:</strong><br><?= date('d/m/Y H:i', strtotime($rekam_medis['tanggal_periksa'])) ?></div>
+            <div class="col-md-3"><strong>Tgl Periksa:</strong><br><?= date('d/m/Y', strtotime($rekam_medis['tgl_periksa'])) ?></div>
             <div class="col-md-3"><strong>Keluhan:</strong><br><?= esc($rekam_medis['keluhan']) ?></div>
           </div>
         </div>
@@ -39,14 +39,14 @@
 
               <!-- Tabel Detail Obat -->
               <div class="table-responsive mb-2">
-                <table class="table table-bordered" id="tabelObat">
-                  <thead class="thead-light">
-                    <tr>
+                <table class="table table-bordered table-striped" id="tabelObat">
+                  <thead class="bg-light">
+                    <tr class="text-center">
                       <th>Obat</th>
-                      <th width="90">Jumlah</th>
-                      <th width="150">Dosis</th>
-                      <th width="130">Harga Satuan</th>
-                      <th width="130">Subtotal</th>
+                      <th width="100">Jumlah</th>
+                      <th width="200">Dosis / Aturan Pakai</th>
+                      <th width="150">Harga Satuan</th>
+                      <th width="150">Subtotal</th>
                       <th width="50">#</th>
                     </tr>
                   </thead>
@@ -56,25 +56,25 @@
                         <select name="id_obat[]" class="form-control sel-obat" required>
                           <option value="">-- Pilih Obat --</option>
                           <?php foreach ($obat as $o): ?>
-                          <option value="<?= $o['id_obat'] ?>" data-harga="<?= $o['harga'] ?>">
+                          <option value="<?= $o['kode_obat'] ?>" data-harga="<?= $o['harga'] ?>">
                             <?= esc($o['nama_obat']) ?> (Stok: <?= $o['stok'] ?>)
                           </option>
                           <?php endforeach; ?>
                         </select>
                       </td>
-                      <td><input type="number" name="jumlah[]" class="form-control inp-jumlah" value="1" min="1" required></td>
-                      <td><input type="text" name="dosis[]" class="form-control" placeholder="3x1 tablet"></td>
-                      <td><input type="number" name="harga_satuan[]" class="form-control inp-harga" value="0" step="0.01" required></td>
-                      <td><input type="text" class="form-control td-subtotal" value="0" readonly></td>
-                      <td class="text-center">
-                        <button type="button" class="btn btn-sm btn-danger btn-hapus-baris"><i class="la la-trash"></i></button>
+                      <td><input type="number" name="jumlah[]" class="form-control text-center inp-jumlah" value="1" min="1" required></td>
+                      <td><input type="text" name="dosis[]" class="form-control" placeholder="Contoh: 3 x 1 tablet"></td>
+                      <td><input type="number" name="harga_satuan[]" class="form-control text-right inp-harga" value="0" step="0.01" required></td>
+                      <td class="text-right align-middle font-weight-bold td-subtotal-text">Rp 0</td>
+                      <td class="text-center align-middle">
+                        <button type="button" class="btn btn-sm btn-danger btn-hapus-baris" title="Hapus"><i class="la la-trash"></i></button>
                       </td>
                     </tr>
                   </tbody>
                   <tfoot>
                     <tr>
-                      <td colspan="4" class="text-right font-weight-bold">Total:</td>
-                      <td><input type="text" id="totalHarga" class="form-control font-weight-bold" value="0" readonly></td>
+                      <td colspan="4" class="text-right font-weight-bold h5">TOTAL KESELURUHAN:</td>
+                      <td class="text-right font-weight-bold text-primary h5" id="totalHargaText">Rp 0</td>
                       <td></td>
                     </tr>
                   </tfoot>
@@ -99,56 +99,70 @@
 
 <?= $this->endSection() ?>
 
-<?= $this->section('scripts') ?>
+<?= $this->section('script') ?>
 <script>
-const obatData = <?= json_encode($obat) ?>;
-
-function formatRp(n) {
-  return 'Rp ' + parseFloat(n).toLocaleString('id-ID', {minimumFractionDigits: 0});
-}
-
-function hitungSubtotal(row) {
-  const jumlah = parseFloat(row.querySelector('.inp-jumlah').value) || 0;
-  const harga  = parseFloat(row.querySelector('.inp-harga').value)  || 0;
-  const sub    = jumlah * harga;
-  row.querySelector('.td-subtotal').value = formatRp(sub);
-  return sub;
-}
-
-function hitungTotal() {
-  let total = 0;
-  document.querySelectorAll('.row-obat').forEach(row => { total += hitungSubtotal(row); });
-  document.getElementById('totalHarga').value = formatRp(total);
-}
-
-function bindRowEvents(row) {
-  row.querySelector('.sel-obat').addEventListener('change', function() {
-    const opt = this.options[this.selectedIndex];
-    const harga = opt.dataset.harga || 0;
-    row.querySelector('.inp-harga').value = harga;
-    hitungTotal();
-  });
-  row.querySelector('.inp-jumlah').addEventListener('input', hitungTotal);
-  row.querySelector('.inp-harga').addEventListener('input', hitungTotal);
-  row.querySelector('.btn-hapus-baris').addEventListener('click', function() {
-    if (document.querySelectorAll('.row-obat').length > 1) {
-      row.remove(); hitungTotal();
+$(document).ready(function() {
+    function formatRp(n) {
+        return 'Rp ' + parseFloat(n).toLocaleString('id-ID', {minimumFractionDigits: 0});
     }
-  });
-}
 
-// Bind baris pertama
-bindRowEvents(document.querySelector('.row-obat'));
+    function hit_subtotal(row) {
+        const jml = parseFloat(row.find('.inp-jumlah').val()) || 0;
+        const hrg = parseFloat(row.find('.inp-harga').val()) || 0;
+        const sub = jml * hrg;
+        row.find('.td-subtotal-text').text(formatRp(sub));
+        hitung_total();
+    }
 
-document.getElementById('btnTambahBaris').addEventListener('click', function() {
-  const tbody = document.getElementById('bodyObat');
-  const newRow = document.querySelector('.row-obat').cloneNode(true);
-  newRow.querySelector('.sel-obat').value = '';
-  newRow.querySelector('.inp-jumlah').value = 1;
-  newRow.querySelector('.inp-harga').value = 0;
-  newRow.querySelector('.td-subtotal').value = 0;
-  tbody.appendChild(newRow);
-  bindRowEvents(newRow);
+    function hitung_total() {
+        let total = 0;
+        $('.row-obat').each(function() {
+            const jml = parseFloat($(this).find('.inp-jumlah').val()) || 0;
+            const hrg = parseFloat($(this).find('.inp-harga').val()) || 0;
+            total += (jml * hrg);
+        });
+        $('#totalHargaText').text(formatRp(total));
+    }
+
+    // Auto-fill harga saat pilih obat
+    $(document).on('change', '.sel-obat', function() {
+        const opt = $(this).find(':selected');
+        const hrg = opt.data('harga') || 0;
+        const row = $(this).closest('tr');
+        row.find('.inp-harga').val(hrg);
+        hit_subtotal(row);
+    });
+
+    $(document).on('input', '.inp-jumlah, .inp-harga', function() {
+        hit_subtotal($(this).closest('tr'));
+    });
+
+    // Tambah Baris
+    $('#btnTambahBaris').click(function() {
+        const firstRow = $('.row-obat').first();
+        const newRow = firstRow.clone();
+        
+        // Reset values
+        newRow.find('select').val('');
+        newRow.find('.inp-jumlah').val(1);
+        newRow.find('.inp-harga').val(0);
+        newRow.find('.td-subtotal-text').text('Rp 0');
+        
+        $('#bodyObat').append(newRow);
+    });
+
+    // Hapus Baris
+    $(document).on('click', '.btn-hapus-baris', function() {
+        if ($('.row-obat').length > 1) {
+            $(this).closest('tr').remove();
+            hitung_total();
+        } else {
+            alert('Minimal harus ada 1 obat dalam resep.');
+        }
+    });
+
+    // Inisialisasi awal
+    hitung_total();
 });
 </script>
 <?= $this->endSection() ?>

@@ -30,9 +30,8 @@
                     <th>Pasien</th>
                     <th>Dokter</th>
                     <th>Spesialisasi</th>
-                    <th>Tgl Periksa</th>
+                    <th>Tanggal Periksa</th>
                     <th>Keluhan</th>
-                    <th>Status</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -44,24 +43,11 @@
                       <td><?= esc($r['nama_pasien']) ?></td>
                       <td><?= esc($r['nama_dokter']) ?></td>
                       <td><span class="badge badge-light"><?= esc($r['spesialisasi']) ?></span></td>
-                      <td><?= date('d/m/Y H:i', strtotime($r['tanggal_periksa'])) ?></td>
+                      <td><?= date('d/m/Y', strtotime($r['tgl_periksa'])) ?></td>
                       <td class="text-truncate" style="max-width:180px;"><?= esc($r['keluhan']) ?></td>
-                      <td>
-                        <?php if ($r['status'] === 'selesai'): ?>
-                          <span class="badge badge-success">Selesai</span>
-                        <?php else: ?>
-                          <span class="badge badge-warning">Periksa</span>
-                        <?php endif; ?>
-                      </td>
                       <td>
                         <a href="<?= base_url('rekam_medis/detail/'.$r['id_rekam_medis']) ?>"
                            class="btn btn-sm btn-outline-info" title="Detail"><i class="la la-eye"></i></a>
-                        <?php if ($r['status'] !== 'selesai'): ?>
-                        <a href="<?= base_url('resep/tambah/'.$r['id_rekam_medis']) ?>"
-                           class="btn btn-sm btn-outline-success" title="Buat Resep">
-                          <i class="la la-clipboard"></i>
-                        </a>
-                        <?php endif; ?>
                         <a href="<?= base_url('rekam_medis/edit/'.$r['id_rekam_medis']) ?>"
                            class="btn btn-sm btn-outline-warning"><i class="la la-edit"></i></a>
                         <a href="<?= base_url('rekam_medis/hapus/'.$r['id_rekam_medis']) ?>"

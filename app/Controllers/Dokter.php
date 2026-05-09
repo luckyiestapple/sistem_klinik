@@ -16,8 +16,8 @@ class Dokter extends BaseController
 
     private function authCheck()
     {
-        if (!session()->get('login')) {
-            return redirect()->to('/login');
+        if (!session()->get('logged_in')) {
+            return redirect()->to(base_url('login'));
         }
         return null;
     }
@@ -45,16 +45,16 @@ class Dokter extends BaseController
         if ($r = $this->authCheck()) return $r;
 
         $this->model->insert([
-            'nama_dokter'  => $this->request->getPost('nama_dokter'),
+            'id_dokter'    => $this->model->generateID(),
+            'nama'         => $this->request->getPost('nama_dokter'),
             'spesialisasi' => $this->request->getPost('spesialisasi'),
-            'no_telp'      => $this->request->getPost('no_telp'),
             'alamat'       => $this->request->getPost('alamat'),
         ]);
         session()->setFlashdata('success', 'Data dokter berhasil ditambahkan.');
         return redirect()->to('/dokter');
     }
 
-    public function edit(int $id)
+    public function edit($id)
     {
         if ($r = $this->authCheck()) return $r;
 
@@ -65,21 +65,20 @@ class Dokter extends BaseController
         return view('dokter/v_edit_dokter', $data);
     }
 
-    public function update(int $id)
+    public function update($id)
     {
         if ($r = $this->authCheck()) return $r;
 
         $this->model->update($id, [
-            'nama_dokter'  => $this->request->getPost('nama_dokter'),
+            'nama'         => $this->request->getPost('nama_dokter'),
             'spesialisasi' => $this->request->getPost('spesialisasi'),
-            'no_telp'      => $this->request->getPost('no_telp'),
             'alamat'       => $this->request->getPost('alamat'),
         ]);
         session()->setFlashdata('success', 'Data dokter berhasil diperbarui.');
         return redirect()->to('/dokter');
     }
 
-    public function hapus(int $id)
+    public function hapus($id)
     {
         if ($r = $this->authCheck()) return $r;
 
@@ -88,3 +87,4 @@ class Dokter extends BaseController
         return redirect()->to('/dokter');
     }
 }
+

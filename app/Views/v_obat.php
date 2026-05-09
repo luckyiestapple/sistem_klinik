@@ -27,11 +27,10 @@
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Kode Obat</th>
+                    <th>Kode</th>
                     <th>Nama Obat</th>
-                    <th>Kategori</th>
                     <th>Stok</th>
-                    <th>Harga Satuan</th>
+                    <th>Harga</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -42,7 +41,6 @@
                       <td><?= $no++ ?></td>
                       <td><code><?= esc($o['kode_obat']) ?></code></td>
                       <td><?= esc($o['nama_obat']) ?></td>
-                      <td><span class="badge badge-light"><?= esc($o['kategori'] ?? '-') ?></span></td>
                       <td>
                         <?php if ((int)$o['stok'] <= 10): ?>
                           <span class="badge badge-danger"><?= $o['stok'] ?> (Rendah)</span>
@@ -54,9 +52,9 @@
                       </td>
                       <td>Rp <?= number_format($o['harga'], 0, ',', '.') ?></td>
                       <td>
-                        <a href="<?= base_url('obat/edit/'.$o['id_obat']) ?>"
+                        <a href="<?= base_url('obat/edit/'.$o['kode_obat']) ?>"
                            class="btn btn-sm btn-outline-warning"><i class="la la-edit"></i></a>
-                        <a href="<?= base_url('obat/hapus/'.$o['id_obat']) ?>"
+                        <a href="<?= base_url('obat/hapus/'.$o['kode_obat']) ?>"
                            class="btn btn-sm btn-outline-danger"
                            onclick="return confirm('Hapus obat ini?')"><i class="la la-trash"></i></a>
                       </td>

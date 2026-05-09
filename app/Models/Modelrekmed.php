@@ -23,11 +23,11 @@ class Modelrekmed extends Model
      */
     public function getRekamMedisLengkap()
     {
-        return db()->table('tb_rekam_medis rm')
-            ->select('rm.*, p.nama_pasien, d.nama_dokter, d.spesialisasi')
+        return $this->db->table('tb_rekam_medis rm')
+            ->select('rm.*, p.nama AS nama_pasien, d.nama AS nama_dokter, d.spesialisasi')
             ->join('tb_pasien p', 'p.id_pasien = rm.id_pasien')
             ->join('tb_dokter d', 'd.id_dokter = rm.id_dokter')
-            ->orderBy('rm.tanggal_periksa', 'DESC')
+            ->orderBy('rm.tgl_periksa', 'DESC')
             ->get()->getResultArray();
     }
 
@@ -36,6 +36,7 @@ class Modelrekmed extends Model
      */
     public function getTodayCount()
     {
-        return $this->where('DATE(tanggal_periksa)', date('Y-m-d'))->countAllResults();
+        return $this->where('DATE(tgl_periksa)', date('Y-m-d'))->countAllResults();
     }
 }
+

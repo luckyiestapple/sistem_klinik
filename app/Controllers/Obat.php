@@ -16,8 +16,8 @@ class Obat extends BaseController
 
     private function authCheck()
     {
-        if (!session()->get('login')) {
-            return redirect()->to('/login');
+        if (!session()->get('logged_in')) {
+            return redirect()->to(base_url('login'));
         }
         return null;
     }
@@ -47,7 +47,6 @@ class Obat extends BaseController
         $this->model->insert([
             'kode_obat' => $this->request->getPost('kode_obat'),
             'nama_obat' => $this->request->getPost('nama_obat'),
-            'kategori'  => $this->request->getPost('kategori'),
             'stok'      => $this->request->getPost('stok'),
             'harga'     => $this->request->getPost('harga'),
         ]);
@@ -55,7 +54,7 @@ class Obat extends BaseController
         return redirect()->to('/obat');
     }
 
-    public function edit(int $id)
+    public function edit($id)
     {
         if ($r = $this->authCheck()) return $r;
 
@@ -66,14 +65,13 @@ class Obat extends BaseController
         return view('obat/v_edit_obat', $data);
     }
 
-    public function update(int $id)
+    public function update($id)
     {
         if ($r = $this->authCheck()) return $r;
 
         $this->model->update($id, [
             'kode_obat' => $this->request->getPost('kode_obat'),
             'nama_obat' => $this->request->getPost('nama_obat'),
-            'kategori'  => $this->request->getPost('kategori'),
             'stok'      => $this->request->getPost('stok'),
             'harga'     => $this->request->getPost('harga'),
         ]);
@@ -81,7 +79,7 @@ class Obat extends BaseController
         return redirect()->to('/obat');
     }
 
-    public function hapus(int $id)
+    public function hapus($id)
     {
         if ($r = $this->authCheck()) return $r;
 
@@ -90,3 +88,4 @@ class Obat extends BaseController
         return redirect()->to('/obat');
     }
 }
+

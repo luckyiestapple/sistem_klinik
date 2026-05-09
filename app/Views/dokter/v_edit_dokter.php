@@ -23,7 +23,7 @@
               <div class="form-group">
                 <label>Nama Dokter <span class="text-danger">*</span></label>
                 <input type="text" name="nama_dokter" class="form-control"
-                       value="<?= esc($dokter['nama_dokter']) ?>" required>
+                       value="<?= esc($dokter['nama']) ?>" required>
               </div>
               <div class="form-group">
                 <label>Spesialisasi <span class="text-danger">*</span></label>
@@ -33,10 +33,6 @@
                   <option value="<?= $s ?>" <?= $dokter['spesialisasi'] === $s ? 'selected' : '' ?>><?= $s ?></option>
                   <?php endforeach; ?>
                 </select>
-              </div>
-              <div class="form-group">
-                <label>No. Telepon</label>
-                <input type="text" name="no_telp" class="form-control" value="<?= esc($dokter['no_telp'] ?? '') ?>">
               </div>
               <div class="form-group">
                 <label>Alamat</label>

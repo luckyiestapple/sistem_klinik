@@ -16,8 +16,8 @@ class Pasien extends BaseController
 
     private function authCheck()
     {
-        if (!session()->get('login')) {
-            return redirect()->to('/login');
+        if (!session()->get('logged_in')) {
+            return redirect()->to(base_url('login'));
         }
         return null;
     }
@@ -45,17 +45,18 @@ class Pasien extends BaseController
         if ($r = $this->authCheck()) return $r;
 
         $this->model->insert([
-            'nama_pasien'   => $this->request->getPost('nama_pasien'),
-            'jenis_kelamin' => $this->request->getPost('jenis_kelamin'),
-            'tanggal_lahir' => $this->request->getPost('tanggal_lahir'),
-            'no_telp'       => $this->request->getPost('no_telp'),
-            'alamat'        => $this->request->getPost('alamat'),
+            'id_pasien' => $this->model->generateID(),
+            'nama'      => $this->request->getPost('nama_pasien'),
+            'jk'        => $this->request->getPost('jenis_kelamin'),
+            'tgl_lahir' => $this->request->getPost('tanggal_lahir'),
+            'no_telp'   => $this->request->getPost('no_telp'),
+            'alamat'    => $this->request->getPost('alamat'),
         ]);
         session()->setFlashdata('success', 'Pasien berhasil didaftarkan.');
         return redirect()->to('/pasien');
     }
 
-    public function edit(int $id)
+    public function edit($id)
     {
         if ($r = $this->authCheck()) return $r;
 
@@ -66,22 +67,22 @@ class Pasien extends BaseController
         return view('pasien/v_edit_pasien', $data);
     }
 
-    public function update(int $id)
+    public function update($id)
     {
         if ($r = $this->authCheck()) return $r;
 
         $this->model->update($id, [
-            'nama_pasien'   => $this->request->getPost('nama_pasien'),
-            'jenis_kelamin' => $this->request->getPost('jenis_kelamin'),
-            'tanggal_lahir' => $this->request->getPost('tanggal_lahir'),
-            'no_telp'       => $this->request->getPost('no_telp'),
-            'alamat'        => $this->request->getPost('alamat'),
+            'nama'      => $this->request->getPost('nama_pasien'),
+            'jk'        => $this->request->getPost('jenis_kelamin'),
+            'tgl_lahir' => $this->request->getPost('tanggal_lahir'),
+            'no_telp'   => $this->request->getPost('no_telp'),
+            'alamat'    => $this->request->getPost('alamat'),
         ]);
         session()->setFlashdata('success', 'Data pasien berhasil diperbarui.');
         return redirect()->to('/pasien');
     }
 
-    public function hapus(int $id)
+    public function hapus($id)
     {
         if ($r = $this->authCheck()) return $r;
 
@@ -90,3 +91,4 @@ class Pasien extends BaseController
         return redirect()->to('/pasien');
     }
 }
+

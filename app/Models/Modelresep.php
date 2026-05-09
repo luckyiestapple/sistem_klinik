@@ -11,11 +11,10 @@ class Modelresep extends Model
     protected $useAutoIncrement = true;     // kode resep auto increment
     protected $returnType       = 'array';
     protected $allowedFields    = [
-        'id_rekam_medis',
+        'id_pasien',
+        'id_dokter',
         'tgl_resep',
         'total_harga',
-        'status',
-        'catatan',
     ];
 
     /**
@@ -23,11 +22,10 @@ class Modelresep extends Model
      */
     public function getResepLengkap()
     {
-        return db()->table('tb_resep r')
-            ->select('r.*, rm.tgl_periksa, rm.keluhan, p.nama_pasien, d.nama_dokter')
-            ->join('tb_rekam_medis rm', 'rm.id_rekam_medis = r.id_rekam_medis')
-            ->join('tb_pasien p',       'p.id_pasien = rm.id_pasien')
-            ->join('tb_dokter d',       'd.id_dokter = rm.id_dokter')
+        return $this->db->table('tb_resep r')
+            ->select('r.*, p.nama AS nama_pasien, d.nama AS nama_dokter')
+            ->join('tb_pasien p', 'p.id_pasien = r.id_pasien')
+            ->join('tb_dokter d', 'd.id_dokter = r.id_dokter')
             ->orderBy('r.tgl_resep', 'DESC')
             ->get()->getResultArray();
     }
@@ -40,3 +38,4 @@ class Modelresep extends Model
         return $this->where('status', 'menunggu')->countAllResults();
     }
 }
+

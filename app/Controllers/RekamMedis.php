@@ -20,8 +20,8 @@ class RekamMedis extends BaseController
 
     private function authCheck()
     {
-        if (!session()->get('login')) {
-            return redirect()->to('/login');
+        if (!session()->get('logged_in')) {
+            return redirect()->to(base_url('login'));
         }
         return null;
     }
@@ -58,23 +58,22 @@ class RekamMedis extends BaseController
         if ($r = $this->authCheck()) return $r;
 
         $this->model->insert([
-            'id_pasien'         => $this->request->getPost('id_pasien'),
-            'id_dokter'         => $this->request->getPost('id_dokter'),
-            'tanggal_periksa'   => $this->request->getPost('tanggal_periksa'),
-            'keluhan'           => $this->request->getPost('keluhan'),
-            'hasil_pemeriksaan' => $this->request->getPost('hasil_pemeriksaan'),
-            'status'            => 'periksa',
+            'id_pasien'   => $this->request->getPost('id_pasien'),
+            'id_dokter'   => $this->request->getPost('id_dokter'),
+            'tgl_periksa' => $this->request->getPost('tanggal_periksa'),
+            'keluhan'     => $this->request->getPost('keluhan'),
+            'diagnosa'    => $this->request->getPost('hasil_pemeriksaan'),
         ]);
         session()->setFlashdata('success', 'Rekam medis berhasil disimpan.');
         return redirect()->to('/rekam_medis');
     }
 
-    public function detail(int $id)
+    public function detail($id)
     {
         if ($r = $this->authCheck()) return $r;
 
         $rekmed = $this->db->table('tb_rekam_medis rm')
-            ->select('rm.*, p.nama_pasien, d.nama_dokter, d.spesialisasi')
+            ->select('rm.*, p.nama AS nama_pasien, d.nama AS nama_dokter, d.spesialisasi')
             ->join('tb_pasien p', 'p.id_pasien = rm.id_pasien')
             ->join('tb_dokter d', 'd.id_dokter = rm.id_dokter')
             ->where('rm.id_rekam_medis', $id)
@@ -87,7 +86,7 @@ class RekamMedis extends BaseController
         return view('rekam_medis/v_detail_rekmed', $data);
     }
 
-    public function edit(int $id)
+    public function edit($id)
     {
         if ($r = $this->authCheck()) return $r;
 
@@ -103,23 +102,22 @@ class RekamMedis extends BaseController
         return view('rekam_medis/v_edit_rekmed', $data);
     }
 
-    public function update(int $id)
+    public function update($id)
     {
         if ($r = $this->authCheck()) return $r;
 
         $this->model->update($id, [
-            'id_pasien'         => $this->request->getPost('id_pasien'),
-            'id_dokter'         => $this->request->getPost('id_dokter'),
-            'tanggal_periksa'   => $this->request->getPost('tanggal_periksa'),
-            'keluhan'           => $this->request->getPost('keluhan'),
-            'hasil_pemeriksaan' => $this->request->getPost('hasil_pemeriksaan'),
-            'status'            => $this->request->getPost('status'),
+            'id_pasien'   => $this->request->getPost('id_pasien'),
+            'id_dokter'   => $this->request->getPost('id_dokter'),
+            'tgl_periksa' => $this->request->getPost('tanggal_periksa'),
+            'keluhan'     => $this->request->getPost('keluhan'),
+            'diagnosa'    => $this->request->getPost('hasil_pemeriksaan'),
         ]);
         session()->setFlashdata('success', 'Rekam medis berhasil diperbarui.');
         return redirect()->to('/rekam_medis');
     }
 
-    public function hapus(int $id)
+    public function hapus($id)
     {
         if ($r = $this->authCheck()) return $r;
 
@@ -128,3 +126,4 @@ class RekamMedis extends BaseController
         return redirect()->to('/rekam_medis');
     }
 }
+

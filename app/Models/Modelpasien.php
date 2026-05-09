@@ -8,16 +8,30 @@ class Modelpasien extends Model
 {
     protected $table            = 'tb_pasien';
     protected $primaryKey       = 'id_pasien';
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false; // varchar(12)
     protected $returnType       = 'array';
     protected $allowedFields    = [
-        'nama_pasien',
-        'jenis_kelamin',
-        'tanggal_lahir',
+        'id_pasien',
+        'nama',
+        'jk',
+        'tgl_lahir',
         'no_telp',
         'alamat',
     ];
-    protected $useTimestamps = true;
-    protected $createdField  = 'created_at';
-    protected $updatedField  = '';
+    protected $useTimestamps = false; // Not in SQL dump
+
+    /**
+     * Generate ID Pasien otomatis (PSN-xxx)
+     */
+    public function generateID()
+    {
+        $last = $this->selectMax('id_pasien')->first();
+        if (!$last || !$last['id_pasien']) {
+            return 'P001';
+        }
+
+        $num = (int) substr($last['id_pasien'], 1);
+        $next = $num + 1;
+        return 'P' . str_pad($next, 3, '0', STR_PAD_LEFT);
+    }
 }

@@ -28,7 +28,7 @@
                     <?php foreach ($pasien as $p): ?>
                     <option value="<?= $p['id_pasien'] ?>"
                       <?= (isset($_GET['id_pasien']) && $_GET['id_pasien'] == $p['id_pasien']) ? 'selected' : '' ?>>
-                      <?= esc($p['nama_pasien']) ?>
+                      <?= esc($p['nama']) ?>
                     </option>
                     <?php endforeach; ?>
                   </select>
@@ -39,7 +39,7 @@
                     <option value="">-- Pilih Dokter --</option>
                     <?php foreach ($dokter as $d): ?>
                     <option value="<?= $d['id_dokter'] ?>">
-                      <?= esc($d['nama_dokter']) ?> — <?= esc($d['spesialisasi']) ?>
+                      <?= esc($d['nama']) ?> — <?= esc($d['spesialisasi']) ?>
                     </option>
                     <?php endforeach; ?>
                   </select>

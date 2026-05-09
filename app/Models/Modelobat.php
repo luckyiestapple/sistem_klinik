@@ -7,13 +7,12 @@ use CodeIgniter\Model;
 class Modelobat extends Model
 {
     protected $table            = 'tb_obat';
-    protected $primaryKey       = 'id_obat';
-    protected $useAutoIncrement = true;
+    protected $primaryKey       = 'kode_obat';
+    protected $useAutoIncrement = false;
     protected $returnType       = 'array';
     protected $allowedFields    = [
         'kode_obat',
         'nama_obat',
-        'kategori',
         'stok',
         'harga',
     ];

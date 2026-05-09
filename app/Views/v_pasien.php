@@ -27,11 +27,11 @@
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>ID Pasien</th>
                     <th>Nama Pasien</th>
-                    <th>JK</th>
-                    <th>Tgl Lahir</th>
+                    <th>Jenis Kelamin</th>
+                    <th>Tanggal Lahir</th>
                     <th>No. Telepon</th>
-                    <th>Tgl Daftar</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -40,20 +40,20 @@
                     <?php foreach ($pasien as $p): ?>
                     <tr>
                       <td><?= $no++ ?></td>
-                      <td><?= esc($p['nama_pasien']) ?></td>
-                      <td><?= $p['jenis_kelamin'] === 'L' ? 'Laki-laki' : 'Perempuan' ?></td>
-                      <td><?= $p['tanggal_lahir'] ? date('d/m/Y', strtotime($p['tanggal_lahir'])) : '-' ?></td>
+                      <td><span class="badge badge-info"><?= $p['id_pasien'] ?></span></td>
+                      <td><?= esc($p['nama']) ?></td>
+                      <td><?= $p['jk'] === 'L' ? 'Laki-laki' : 'Perempuan' ?></td>
+                      <td><?= $p['tgl_lahir'] ? date('d/m/Y', strtotime($p['tgl_lahir'])) : '-' ?></td>
                       <td><?= esc($p['no_telp'] ?? '-') ?></td>
-                      <td><?= $p['created_at'] ? date('d/m/Y', strtotime($p['created_at'])) : '-' ?></td>
                       <td>
                         <a href="<?= base_url('rekam_medis/tambah?id_pasien='.$p['id_pasien']) ?>"
                            class="btn btn-sm btn-outline-success" title="Input Rekam Medis">
                           <i class="la la-stethoscope"></i>
                         </a>
                         <a href="<?= base_url('pasien/edit/'.$p['id_pasien']) ?>"
-                           class="btn btn-sm btn-outline-warning"><i class="la la-edit"></i></a>
+                           class="btn btn-sm btn-outline-warning" title="Edit"><i class="la la-edit"></i></a>
                         <a href="<?= base_url('pasien/hapus/'.$p['id_pasien']) ?>"
-                           class="btn btn-sm btn-outline-danger"
+                           class="btn btn-sm btn-outline-danger" title="Hapus"
                            onclick="return confirm('Hapus pasien ini?')"><i class="la la-trash"></i></a>
                       </td>
                     </tr>

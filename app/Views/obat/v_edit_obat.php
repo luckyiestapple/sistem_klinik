@@ -16,7 +16,7 @@
         <div class="card-header"><h4 class="card-title">Form Edit Obat</h4></div>
         <div class="card-content">
           <div class="card-body">
-            <form action="<?= base_url('obat/update/'.$obat['id_obat']) ?>" method="POST">
+            <form action="<?= base_url('obat/update/'.$obat['kode_obat']) ?>" method="POST">
               <?= csrf_field() ?>
               <div class="form-group">
                 <label>Kode Obat <span class="text-danger">*</span></label>
@@ -26,16 +26,7 @@
                 <label>Nama Obat <span class="text-danger">*</span></label>
                 <input type="text" name="nama_obat" class="form-control" value="<?= esc($obat['nama_obat']) ?>" required>
               </div>
-              <div class="form-group">
-                <label>Kategori</label>
-                <?php $kats = ['Analgesik','Antibiotik','Antasid','Antihistamin','Vitamin','Antihipertensi','Antidiabetik','Lainnya']; ?>
-                <select name="kategori" class="form-control">
-                  <option value="">-- Pilih --</option>
-                  <?php foreach ($kats as $k): ?>
-                  <option <?= ($obat['kategori'] ?? '') === $k ? 'selected' : '' ?>><?= $k ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
+
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label>Stok <span class="text-danger">*</span></label>

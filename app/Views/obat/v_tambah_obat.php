@@ -26,16 +26,7 @@
                 <label>Nama Obat <span class="text-danger">*</span></label>
                 <input type="text" name="nama_obat" class="form-control" placeholder="Nama obat" required>
               </div>
-              <div class="form-group">
-                <label>Kategori</label>
-                <select name="kategori" class="form-control">
-                  <option value="">-- Pilih Kategori --</option>
-                  <option>Analgesik</option><option>Antibiotik</option>
-                  <option>Antasid</option><option>Antihistamin</option>
-                  <option>Vitamin</option><option>Antihipertensi</option>
-                  <option>Antidiabetik</option><option>Lainnya</option>
-                </select>
-              </div>
+
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label>Stok <span class="text-danger">*</span></label>

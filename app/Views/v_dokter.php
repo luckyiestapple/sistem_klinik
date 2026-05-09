@@ -27,9 +27,9 @@
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>ID Dokter</th>
                     <th>Nama Dokter</th>
                     <th>Spesialisasi</th>
-                    <th>No. Telepon</th>
                     <th>Alamat</th>
                     <th>Aksi</th>
                   </tr>
@@ -39,15 +39,15 @@
                     <?php foreach ($dokter as $d): ?>
                     <tr>
                       <td><?= $no++ ?></td>
-                      <td><?= esc($d['nama_dokter']) ?></td>
-                      <td><span class="badge badge-info"><?= esc($d['spesialisasi']) ?></span></td>
-                      <td><?= esc($d['no_telp'] ?? '-') ?></td>
+                      <td><span class="badge badge-info"><?= $d['id_dokter'] ?></span></td>
+                      <td><?= esc($d['nama']) ?></td>
+                      <td><span class="badge badge-light"><?= esc($d['spesialisasi']) ?></span></td>
                       <td><?= esc($d['alamat'] ?? '-') ?></td>
                       <td>
                         <a href="<?= base_url('dokter/edit/'.$d['id_dokter']) ?>"
-                           class="btn btn-sm btn-outline-warning"><i class="la la-edit"></i></a>
+                           class="btn btn-sm btn-outline-warning" title="Edit"><i class="la la-edit"></i></a>
                         <a href="<?= base_url('dokter/hapus/'.$d['id_dokter']) ?>"
-                           class="btn btn-sm btn-outline-danger"
+                           class="btn btn-sm btn-outline-danger" title="Hapus"
                            onclick="return confirm('Hapus dokter ini?')"><i class="la la-trash"></i></a>
                       </td>
                     </tr>

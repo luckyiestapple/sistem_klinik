@@ -27,7 +27,7 @@
                     <?php foreach ($pasien as $p): ?>
                     <option value="<?= $p['id_pasien'] ?>"
                       <?= $rekam_medis['id_pasien'] == $p['id_pasien'] ? 'selected' : '' ?>>
-                      <?= esc($p['nama_pasien']) ?>
+                      <?= esc($p['nama']) ?>
                     </option>
                     <?php endforeach; ?>
                   </select>
@@ -38,7 +38,7 @@
                     <?php foreach ($dokter as $d): ?>
                     <option value="<?= $d['id_dokter'] ?>"
                       <?= $rekam_medis['id_dokter'] == $d['id_dokter'] ? 'selected' : '' ?>>
-                      <?= esc($d['nama_dokter']) ?> — <?= esc($d['spesialisasi']) ?>
+                      <?= esc($d['nama']) ?> — <?= esc($d['spesialisasi']) ?>
                     </option>
                     <?php endforeach; ?>
                   </select>
@@ -47,7 +47,7 @@
               <div class="form-group">
                 <label>Tanggal & Jam Periksa</label>
                 <input type="datetime-local" name="tanggal_periksa" class="form-control"
-                       value="<?= date('Y-m-d\TH:i', strtotime($rekam_medis['tanggal_periksa'])) ?>">
+                       value="<?= date('Y-m-d\TH:i', strtotime($rekam_medis['tgl_periksa'])) ?>">
               </div>
               <div class="form-group">
                 <label>Keluhan / Gejala <span class="text-danger">*</span></label>
@@ -55,15 +55,9 @@
               </div>
               <div class="form-group">
                 <label>Hasil Pemeriksaan / Diagnosa</label>
-                <textarea name="hasil_pemeriksaan" class="form-control" rows="4"><?= esc($rekam_medis['hasil_pemeriksaan'] ?? '') ?></textarea>
+                <textarea name="hasil_pemeriksaan" class="form-control" rows="4"><?= esc($rekam_medis['diagnosa'] ?? '') ?></textarea>
               </div>
-              <div class="form-group">
-                <label>Status</label>
-                <select name="status" class="form-control">
-                  <option value="periksa" <?= $rekam_medis['status']==='periksa' ? 'selected' : '' ?>>Periksa</option>
-                  <option value="selesai" <?= $rekam_medis['status']==='selesai' ? 'selected' : '' ?>>Selesai</option>
-                </select>
-              </div>
+
               <div class="form-group mt-2">
                 <button type="submit" class="btn btn-warning"><i class="la la-save"></i> Update</button>
                 <a href="<?= base_url('rekam_medis') ?>" class="btn btn-secondary ml-1">Batal</a>

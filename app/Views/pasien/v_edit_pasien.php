@@ -23,19 +23,19 @@
               <div class="form-group">
                 <label>Nama Lengkap <span class="text-danger">*</span></label>
                 <input type="text" name="nama_pasien" class="form-control"
-                       value="<?= esc($pasien['nama_pasien']) ?>" required>
+                       value="<?= esc($pasien['nama']) ?>" required>
               </div>
               <div class="form-group">
                 <label>Jenis Kelamin <span class="text-danger">*</span></label>
                 <select name="jenis_kelamin" class="form-control" required>
-                  <option value="L" <?= $pasien['jenis_kelamin']==='L' ? 'selected' : '' ?>>Laki-laki</option>
-                  <option value="P" <?= $pasien['jenis_kelamin']==='P' ? 'selected' : '' ?>>Perempuan</option>
+                  <option value="L" <?= $pasien['jk']==='L' ? 'selected' : '' ?>>Laki-laki</option>
+                  <option value="P" <?= $pasien['jk']==='P' ? 'selected' : '' ?>>Perempuan</option>
                 </select>
               </div>
               <div class="form-group">
                 <label>Tanggal Lahir</label>
                 <input type="date" name="tanggal_lahir" class="form-control"
-                       value="<?= $pasien['tanggal_lahir'] ?? '' ?>">
+                       value="<?= $pasien['tgl_lahir'] ?? '' ?>">
               </div>
               <div class="form-group">
                 <label>No. Telepon</label>

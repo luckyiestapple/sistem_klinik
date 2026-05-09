@@ -23,8 +23,8 @@ class Resep extends BaseController
 
     private function authCheck()
     {
-        if (!session()->get('login')) {
-            return redirect()->to('/login');
+        if (!session()->get('logged_in')) {
+            return redirect()->to(base_url('login'));
         }
         return null;
     }
@@ -45,7 +45,7 @@ class Resep extends BaseController
      * Tambah resep berdasarkan rekam medis yang ada.
      * (:num) = id_rekam_medis
      */
-    public function tambah(int $idRekamMedis)
+    public function tambah($idRekamMedis)
     {
         if ($r = $this->authCheck()) return $r;
 
@@ -53,7 +53,7 @@ class Resep extends BaseController
         $obatModel   = new Modelobat();
 
         $rekmed = $this->db->table('tb_rekam_medis rm')
-            ->select('rm.*, p.nama_pasien, d.nama_dokter')
+            ->select('rm.*, p.nama AS nama_pasien, d.nama AS nama_dokter')
             ->join('tb_pasien p', 'p.id_pasien = rm.id_pasien')
             ->join('tb_dokter d', 'd.id_dokter = rm.id_dokter')
             ->where('rm.id_rekam_medis', $idRekamMedis)
@@ -83,42 +83,53 @@ class Resep extends BaseController
             $total += (int)$jml * (float)$hargaArr[$i];
         }
 
+        // Ambil data pasien & dokter dari rekmed untuk resep
+        $rekmedModel = new Modelrekmed();
+        $rm = $rekmedModel->find($idRekamMedis);
+
         // Simpan header resep (id_resep auto increment)
         $idResep = $this->model->insert([
-            'id_rekam_medis' => $idRekamMedis,
-            'tanggal_resep'  => date('Y-m-d H:i:s'),
-            'total_harga'    => $total,
-            'status'         => 'menunggu',
+            'id_pasien'   => $rm['id_pasien'],
+            'id_dokter'   => $rm['id_dokter'],
+            'tgl_resep'   => date('Y-m-d'),
+            'total_harga' => $total,
         ], true);
 
-        // Simpan detail resep (id_detail auto increment, tanpa subtotal)
+        // Simpan detail resep & Update Stok Obat
+        $obatModel = new \App\Models\Modelobat();
         foreach ($idObatArr as $i => $idObat) {
+            // Simpan detail
             $this->detailModel->insert([
-                'id_resep'     => $idResep,
-                'id_obat'      => $idObat,
+                'kode_resep'   => $idResep,
+                'kode_obat'    => $idObat,
                 'jumlah'       => $jumlahArr[$i],
                 'dosis'        => $dosisArr[$i],
-                'harga_satuan' => $hargaArr[$i],
+                'harga'        => $hargaArr[$i],
             ]);
+
+            // Update stok obat
+            $obat = $obatModel->find($idObat);
+            if ($obat) {
+                $newStok = (int)$obat['stok'] - (int)$jumlahArr[$i];
+                $obatModel->update($idObat, ['stok' => $newStok]);
+            }
         }
 
-        // Update status rekam medis → selesai
-        $rekmedModel = new Modelrekmed();
-        $rekmedModel->update($idRekamMedis, ['status' => 'selesai']);
+        // Di SQL dump tb_rekam_medis tidak ada kolom status.
+        // session()->setFlashdata('success', 'Resep berhasil dibuat.');
 
         session()->setFlashdata('success', 'Resep berhasil dibuat.');
         return redirect()->to('/resep');
     }
 
-    public function detail(int $id)
+    public function detail($id)
     {
         if ($r = $this->authCheck()) return $r;
 
         $resep = $this->db->table('tb_resep r')
-            ->select('r.*, rm.keluhan, rm.hasil_pemeriksaan, rm.tanggal_periksa, p.nama_pasien, d.nama_dokter, d.spesialisasi')
-            ->join('tb_rekam_medis rm', 'rm.id_rekam_medis = r.id_rekam_medis')
-            ->join('tb_pasien p',       'p.id_pasien = rm.id_pasien')
-            ->join('tb_dokter d',       'd.id_dokter = rm.id_dokter')
+            ->select('r.*, p.nama AS nama_pasien, d.nama AS nama_dokter, d.spesialisasi')
+            ->join('tb_pasien p', 'p.id_pasien = r.id_pasien')
+            ->join('tb_dokter d', 'd.id_dokter = r.id_dokter')
             ->where('r.id_resep', $id)
             ->get()->getRowArray();
 
@@ -133,21 +144,6 @@ class Resep extends BaseController
         return view('resep/v_detail_resep', $data);
     }
 
-    /**
-     * Apoteker mengupdate status resep.
-     */
-    public function updateStatus(int $id)
-    {
-        if ($r = $this->authCheck()) return $r;
 
-        $status = $this->request->getPost('status');
-        $catatan = $this->request->getPost('catatan');
-
-        $this->model->update($id, [
-            'status'  => $status,
-            'catatan' => $catatan,
-        ]);
-        session()->setFlashdata('success', 'Status resep berhasil diperbarui.');
-        return redirect()->to('/resep');
-    }
 }
+
