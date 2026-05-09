@@ -2,34 +2,25 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
-use App\Models\Modelpasien;
-use App\Models\Modeldokter;
-use App\Models\Modelrekmed;
-use App\Models\Modelresep;
-
 class Dashboard extends BaseController
 {
     public function index()
     {
-        if (!session()->get('login')) {
+        // Cek login dan pastikan levelnya admin/pegawai
+        if (!session()->get('logged_in')) {
             return redirect()->to('/login');
         }
 
-        $pasien  = new Modelpasien();
-        $dokter  = new Modeldokter();
-        $rekmed  = new Modelrekmed();
-        $resep   = new Modelresep();
+        $id_level = session()->get('id_level');
+        if ($id_level != 1 && $id_level != 3) { 
+            // Level 1 = Admin, 3 = Pegawai (asumsi)
+            // Jika bukan admin/pegawai, tolak
+            return redirect()->to('/login')->with('error', 'Akses ditolak.');
+        }
 
         $data = [
-            'total_pasien'  => $pasien->countAll(),
-            'total_dokter'  => $dokter->countAll(),
-            'rekmed_hari_ini' => $rekmed->getTodayCount(),
-            'resep_menunggu'  => $resep->getMenungguCount(),
-            'daftar_dokter'   => $dokter->findAll(5),
-            'rekmed_terbaru'  => $rekmed->getRekamMedisLengkap(),
+            'title' => 'Dashboard Utama (Klinik)'
         ];
-
-        return view('v_dashboard', $data);
+        return view('dashboard/admin', $data);
     }
-}
+}

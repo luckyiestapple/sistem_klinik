@@ -1,5 +1,5 @@
-<?= $this->extend('templates/index') ?>
-<?= $this->section('content') ?>
+<?= $this->extend('templates/template') ?>
+<?= $this->section('konten') ?>
 
 <div class="content-header row">
   <div class="content-header-left col-12 mb-2">
@@ -120,3 +120,4 @@ function updateStatus(id, currentStatus) {
 }
 </script>
 <?= $this->endSection() ?>
+

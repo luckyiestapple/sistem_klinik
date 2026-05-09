@@ -150,7 +150,7 @@
     </div>
     <?php endif; ?>
 
-    <?= $this->renderSection('content') ?>
+    <?= $this->rendersection('konten') ?>
 
   </div>
 </div>

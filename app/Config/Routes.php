@@ -6,14 +6,18 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
+// ── Landing Page / Main ───────────────────────────────────
+$routes->get('/',       'Home::index');
+
 // ── Auth ──────────────────────────────────────────────────
-$routes->get('/',       'Auth::index');
 $routes->get('/login',  'Auth::index');
 $routes->post('/login', 'Auth::login');
 $routes->get('/logout', 'Auth::logout');
 
 // ── Dashboard ─────────────────────────────────────────────
 $routes->get('/dashboard', 'Dashboard::index');
+$routes->get('/dashboard_pasien', 'DashboardPasien::index');
+$routes->get('/dashboard_dokter', 'DashboardDokter::index');
 
 // ── Data Dokter ───────────────────────────────────────────
 $routes->get('/dokter',            'Dokter::index');
