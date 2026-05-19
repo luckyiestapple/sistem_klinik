@@ -37,5 +37,19 @@ class Modelresep extends Model
     {
         return $this->where('status', 'menunggu')->countAllResults();
     }
+
+    /**
+     * Ambil resep berdasarkan ID Pasien.
+     */
+    public function getResepByPasien($id_pasien)
+    {
+        return $this->db->table('tb_resep r')
+            ->select('r.*, p.nama AS nama_pasien, d.nama AS nama_dokter')
+            ->join('tb_pasien p', 'p.id_pasien = r.id_pasien')
+            ->join('tb_dokter d', 'd.id_dokter = r.id_dokter')
+            ->where('r.id_pasien', $id_pasien)
+            ->orderBy('r.tgl_resep', 'DESC')
+            ->get()->getResultArray();
+    }
 }
 

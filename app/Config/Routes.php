@@ -21,6 +21,14 @@ $routes->get('/dashboard', 'Dashboard::index');
 $routes->get('/dashboard_pasien', 'DashboardPasien::index');
 $routes->get('/dashboard_dokter', 'DashboardDokter::index');
 
+// ── Pasien Pages ──────────────────────────────────────────
+$routes->get('/profil_pasien', 'DashboardPasien::profil');
+$routes->get('/antrian', 'DashboardPasien::antrian');
+$routes->post('/antrian/simpan', 'DashboardPasien::simpanAntrian');
+$routes->get('/resep_pasien', 'DashboardPasien::resep');
+$routes->get('/resep_pasien/detail/(:any)', 'DashboardPasien::resepDetail/$1');
+$routes->get('/rekam_medis_pasien', 'DashboardPasien::rekamMedis');
+
 // ── Data Dokter ───────────────────────────────────────────
 $routes->get('/dokter',            'Dokter::index');
 $routes->get('/dokter/tambah',     'Dokter::tambah');

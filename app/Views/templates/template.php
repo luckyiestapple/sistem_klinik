@@ -60,34 +60,24 @@
                         <i class="ft-home"></i><span class="menu-title">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="#">
+                <li class="nav-item <?= (current_url() == base_url('profil_pasien')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('profil_pasien') ?>">
                         <i class="ft-user"></i><span class="menu-title">Profil Saya</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="#">
-                        <i class="ft-calendar"></i><span class="menu-title">Janji Temu</span>
+                <li class="nav-item <?= (current_url() == base_url('antrian')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('antrian') ?>">
+                        <i class="ft-calendar"></i><span class="menu-title">Ambil Antrian</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="#">
+                <li class="nav-item <?= (current_url() == base_url('resep_pasien')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('resep_pasien') ?>">
                         <i class="ft-clipboard"></i><span class="menu-title">Resep Saya</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="<?= base_url('rekam_medis') ?>">
+                <li class="nav-item <?= (current_url() == base_url('rekam_medis_pasien')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('rekam_medis_pasien') ?>">
                         <i class="ft-activity"></i><span class="menu-title">Rekam Medis</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#">
-                        <i class="ft-bell"></i><span class="menu-title">Notifikasi</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#">
-                        <i class="ft-settings"></i><span class="menu-title">Pengaturan</span>
                     </a>
                 </li>
                 <?php else: // Menu Admin / Dokter / Pegawai ?>

@@ -38,5 +38,19 @@ class Modelrekmed extends Model
     {
         return $this->where('DATE(tgl_periksa)', date('Y-m-d'))->countAllResults();
     }
+
+    /**
+     * Ambil rekam medis berdasarkan ID Pasien.
+     */
+    public function getRekamMedisByPasien($id_pasien)
+    {
+        return $this->db->table('tb_rekam_medis rm')
+            ->select('rm.*, p.nama AS nama_pasien, d.nama AS nama_dokter, d.spesialisasi')
+            ->join('tb_pasien p', 'p.id_pasien = rm.id_pasien')
+            ->join('tb_dokter d', 'd.id_dokter = rm.id_dokter')
+            ->where('rm.id_pasien', $id_pasien)
+            ->orderBy('rm.tgl_periksa', 'DESC')
+            ->get()->getResultArray();
+    }
 }
 

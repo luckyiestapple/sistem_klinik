@@ -49,11 +49,21 @@
 
 <?= $this->section('konten') ?>
 <div class="content-body dashboard-pasien">
+    <!-- Flash Messages -->
+    <?php if (session()->getFlashdata('success')): ?>
+        <div class="alert alert-success alert-dismissible fade show rounded-2xl mb-4" role="alert">
+            <strong>Sukses!</strong> <?= session()->getFlashdata('success') ?>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    <?php endif; ?>
+
     <!-- Header / Sapaan -->
     <div class="row mb-3 mt-2">
         <div class="col-12 d-flex justify-content-between align-items-center">
             <div>
-                <h2 class="font-weight-bold mb-0">Halo, Budi Santoso 👋</h2>
+                <h2 class="font-weight-bold mb-0">Halo, <?= esc($pasien['nama']) ?> 👋</h2>
                 <p class="text-muted">Semoga hari Anda menyenangkan dan sehat selalu.</p>
             </div>
         </div>
@@ -73,7 +83,7 @@
                             <h4 class="mb-0 font-weight-bold">120/80 <small>mmHg</small></h4>
                         </div>
                     </div>
-                    <div class="mt-2 text-success font-small-2"><i class="ft-check-circle"></i> Normal (terakhir 2 hari lalu)</div>
+                    <div class="mt-2 text-success font-small-2"><i class="ft-check-circle"></i> Normal (terakhir periksa)</div>
                 </div>
             </div>
         </div>
@@ -89,7 +99,7 @@
                             <h4 class="mb-0 font-weight-bold">95 <small>mg/dL</small></h4>
                         </div>
                     </div>
-                    <div class="mt-2 text-success font-small-2"><i class="ft-check-circle"></i> Normal (terakhir 1 bln lalu)</div>
+                    <div class="mt-2 text-success font-small-2"><i class="ft-check-circle"></i> Normal (terakhir periksa)</div>
                 </div>
             </div>
         </div>
@@ -101,11 +111,11 @@
                             <i class="ft-shield"></i>
                         </div>
                         <div>
-                            <p class="mb-0 text-muted font-small-3">Status JKN/BPJS</p>
+                            <p class="mb-0 text-muted font-small-3">Status BPJS</p>
                             <h4 class="mb-0 font-weight-bold text-success">AKTIF</h4>
                         </div>
                     </div>
-                    <div class="mt-2 text-muted font-small-2">Kelas 1 - Klinik Sehat Bersama</div>
+                    <div class="mt-2 text-muted font-small-2">Faskes: Klinik Utama Sehat</div>
                 </div>
             </div>
         </div>
@@ -117,121 +127,88 @@
                             <i class="ft-star"></i>
                         </div>
                         <div>
-                            <p class="mb-0 text-muted font-small-3">Program Prolanis</p>
-                            <h4 class="mb-0 font-weight-bold">Diabetes</h4>
+                            <p class="mb-0 text-muted font-small-3">Kunjungan Terakhir</p>
+                            <h4 class="mb-0 font-weight-bold"><?= $latest_rekmed ? date('d/m/Y', strtotime($latest_rekmed['tgl_periksa'])) : '-' ?></h4>
                         </div>
                     </div>
-                    <div class="mt-2 text-info font-small-2"><i class="ft-info"></i> Skrining berikutnya: 10 Jun</div>
+                    <div class="mt-2 text-info font-small-2"><i class="ft-info"></i> Skrining kesehatan mandiri berkala</div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <!-- Highlight Card & Resep -->
-        <div class="col-lg-8 col-12">
-            <!-- Highlight Card: Jadwal Kontrol -->
-            <div class="card card-modern highlight-card rounded-2xl mb-4">
-                <div class="card-body p-4">
-                    <h5 class="text-white mb-3"><i class="ft-calendar"></i> Jadwal Kontrol Berikutnya</h5>
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <h3 class="text-white font-weight-bold">Dr. Andini, Sp.PD</h3>
-                            <p class="mb-1"><i class="ft-map-pin"></i> RS. Siloam - Poli Penyakit Dalam</p>
-                            <p class="mb-0"><i class="ft-clock"></i> 25 Mei 2026 • 09:00 - 11:00 WIB</p>
-                        </div>
-                        <div class="col-md-4 text-center mt-3 mt-md-0">
-                            <div class="bg-white text-teal rounded p-2 mb-2 d-inline-block">
-                                <span class="d-block font-small-2 font-weight-bold text-uppercase">No. Antrean</span>
-                                <h2 class="mb-0 font-weight-bold">A12</h2>
+        <!-- Highlight Card: Jadwal Kontrol -->
+        <div class="col-lg-6 col-12">
+            <?php if (!empty($antrean)): ?>
+                <div class="card card-modern highlight-card rounded-2xl mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="text-white mb-3"><i class="ft-calendar"></i> Jadwal Kontrol Terdekat</h5>
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h3 class="text-white font-weight-bold"><?= esc($antrean['nama_dokter']) ?></h3>
+                                <p class="mb-1"><i class="ft-map-pin"></i> Poli <?= esc($antrean['spesialisasi']) ?></p>
+                                <p class="mb-0"><i class="ft-clock"></i> <?= date('d M Y', strtotime($antrean['tgl_antrean'])) ?></p>
                             </div>
-                            <button class="btn btn-light btn-block btn-sm rounded-pill font-weight-bold">Lihat Tiket Antrean</button>
+                            <div class="col-md-4 text-center mt-3 mt-md-0">
+                                <div class="bg-white text-teal rounded p-2 mb-2 d-inline-block">
+                                    <span class="d-block font-small-2 font-weight-bold text-uppercase">No. Antrean</span>
+                                    <h2 class="mb-0 font-weight-bold"><?= esc($antrean['nomor_antrean']) ?></h2>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Active Prescriptions -->
-            <h5 class="font-weight-bold mb-3 mt-2">Obat & Resep Aktif</h5>
-            <div class="card card-modern rounded-2xl mb-4">
-                <div class="card-body p-0">
-                    <ul class="list-group list-group-flush rounded-2xl">
-                        <li class="list-group-item d-flex justify-content-between align-items-center p-3 border-bottom">
-                            <div class="d-flex align-items-center">
-                                <div class="icon-box bg-teal-light text-teal mr-3" style="width:40px;height:40px;font-size:1.2rem;">
-                                    <i class="ft-box"></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 font-weight-bold">Metformin 500mg</h6>
-                                    <span class="text-muted font-small-3">3x Sehari sesudah makan</span>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="badge badge-warning">Sisa 5 hari</span>
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                            <div class="d-flex align-items-center">
-                                <div class="icon-box bg-blue-light text-blue mr-3" style="width:40px;height:40px;font-size:1.2rem;">
-                                    <i class="ft-box"></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 font-weight-bold">Amlodipine 10mg</h6>
-                                    <span class="text-muted font-small-3">1x Sehari pagi hari</span>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="badge badge-warning">Sisa 5 hari</span>
-                            </div>
-                        </li>
-                    </ul>
+            <?php else: ?>
+                <div class="card card-modern rounded-2xl mb-4" style="background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%); color: white; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                    <div class="card-body p-4 text-center">
+                        <h5 class="text-white mb-2"><i class="ft-calendar"></i> Belum ada jadwal antrean mendatang</h5>
+                        <p class="text-white-50 font-small-3 mb-3">Ambil nomor antrean online secara cepat tanpa antre di klinik.</p>
+                        <a href="<?= base_url('antrian') ?>" class="btn btn-light rounded-pill font-weight-bold px-4">Ambil Antrean Online</a>
+                    </div>
                 </div>
-                <div class="card-footer bg-white border-top-0 text-center rounded-2xl pb-3">
-                    <button class="btn btn-outline-teal btn-sm rounded-pill px-3">Lihat Semua Resep</button>
-                    <button class="btn btn-teal btn-sm rounded-pill px-3 ml-2">Minta Obat Ulang</button>
-                </div>
-            </div>
+            <?php endif; ?>
         </div>
 
-        <!-- Sidebar Widgets -->
-        <div class="col-lg-4 col-12">
-            <!-- Self Screening -->
+        <!-- Active Prescriptions -->
+        <div class="col-lg-6 col-12">
             <div class="card card-modern rounded-2xl mb-4">
-                <div class="card-body text-center p-4">
-                    <div class="icon-box bg-teal-light text-teal mx-auto mb-3" style="width:60px;height:60px;font-size:2rem;">
-                        <i class="ft-activity"></i>
-                    </div>
-                    <h5 class="font-weight-bold">Skrining Riwayat Kesehatan</h5>
-                    <p class="text-muted font-small-3">Cegah penyakit sejak dini dengan mengetahui risiko kesehatan Anda.</p>
-                    <button class="btn btn-teal btn-block rounded-pill font-weight-bold mb-3">Cek Risiko Kesehatan Mandiri</button>
-                    <small class="text-success"><i class="ft-check-circle"></i> Skrining terakhir: 3 bulan lalu (Risiko Rendah)</small>
+                <div class="card-header bg-white border-bottom-0 pb-0 d-flex justify-content-between align-items-center">
+                    <h5 class="font-weight-bold text-dark mb-0">Resep Obat Terbaru</h5>
+                    <a href="<?= base_url('resep_pasien') ?>" class="btn btn-outline-teal btn-sm rounded-pill px-3">Lihat Semua</a>
                 </div>
-            </div>
-
-            <!-- Health Tips -->
-            <div class="card card-modern rounded-2xl mb-4">
-                <div class="card-body">
-                    <h6 class="font-weight-bold mb-3"><i class="ft-sun text-warning"></i> Tips Kesehatan Hari Ini</h6>
-                    <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Healthy Food" class="img-fluid rounded mb-3" style="height:120px;width:100%;object-fit:cover;border-radius:0.75rem;">
-                    <h6 class="font-weight-bold">Menjaga Kadar Gula Darah Stabil</h6>
-                    <p class="text-muted font-small-3 mb-2">Kurangi konsumsi karbohidrat sederhana dan perbanyak serat dari sayuran hijau...</p>
-                    <a href="#" class="text-teal font-small-3 font-weight-bold">Baca selengkapnya &rarr;</a>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="row">
-                <div class="col-6 pr-2">
-                    <button class="btn btn-outline-primary btn-block py-3 card-modern" style="border-radius: 1rem; border-color:#dbeafe; background-color:white;">
-                        <i class="ft-message-circle d-block mb-1 text-primary" style="font-size:1.5rem;"></i>
-                        <span class="font-small-2 text-dark font-weight-bold">Chat Dokter</span>
-                    </button>
-                </div>
-                <div class="col-6 pl-2">
-                    <button class="btn btn-outline-danger btn-block py-3 card-modern" style="border-radius: 1rem; border-color:#fee2e2; background-color:white;">
-                        <i class="ft-phone-call d-block mb-1 text-danger" style="font-size:1.5rem;"></i>
-                        <span class="font-small-2 text-dark font-weight-bold">Darurat</span>
-                    </button>
+                <div class="card-body p-0 mt-3">
+                    <?php if (!empty($resepList)): ?>
+                        <ul class="list-group list-group-flush rounded-2xl">
+                            <?php foreach ($resepList as $resep): ?>
+                                <li class="list-group-item d-flex justify-content-between align-items-center p-3 border-bottom">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-box bg-teal-light text-teal mr-3" style="width:40px;height:40px;font-size:1.2rem; min-width: 40px;">
+                                            <i class="ft-clipboard"></i>
+                                        </div>
+                                        <div style="max-width: 250px;">
+                                            <h6 class="mb-0 font-weight-bold">Resep Tanggal <?= date('d/m/Y', strtotime($resep['tgl_resep'])) ?></h6>
+                                            <span class="text-muted font-small-3 text-truncate d-block">
+                                                Obat: 
+                                                <?php 
+                                                $names = [];
+                                                foreach ($resep['details'] as $d) {
+                                                    $names[] = esc($d['nama_obat']);
+                                                }
+                                                echo empty($names) ? 'Tidak ada detail obat' : implode(', ', $names);
+                                                ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <a href="<?= base_url('resep_pasien/detail/'.$resep['id_resep']) ?>" class="btn btn-sm btn-outline-teal rounded-pill font-weight-bold">Detail</a>
+                                    </div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <div class="p-4 text-center text-muted" style="min-height: 120px; display: flex; align-items: center; justify-content: center;">Belum ada resep obat untuk Anda.</div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
