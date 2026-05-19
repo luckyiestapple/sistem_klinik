@@ -49,4 +49,66 @@ class Auth extends BaseController
         session()->destroy();
         return redirect()->to(base_url('login'));
     }
+
+    public function register()
+    {
+        return view('auth/register');
+    }
+
+    public function processRegister()
+    {
+        $db = \Config\Database::connect();
+        $db->transBegin();
+
+        try {
+            // 1. Simpan Data Pasien
+            $modelPasien = new \App\Models\Modelpasien();
+            $idPasien = $modelPasien->generateID();
+
+            $dataPasien = [
+                'id_pasien' => $idPasien,
+                'nama'      => $this->request->getPost('nama'),
+                'jk'        => $this->request->getPost('jk'),
+                'tgl_lahir' => $this->request->getPost('tgl_lahir'),
+                'no_telp'   => $this->request->getPost('no_telp'),
+                'alamat'    => $this->request->getPost('alamat'),
+            ];
+
+            $modelPasien->insert($dataPasien);
+
+            // 2. Simpan Data User
+            $modelUser = new \App\Models\UserModel();
+            
+            // Cek apakah username sudah ada
+            $cekUser = $modelUser->where('username', $this->request->getPost('username'))->first();
+            if ($cekUser) {
+                $db->transRollback();
+                session()->setFlashdata('error', 'Username sudah digunakan!');
+                return redirect()->to(base_url('register'));
+            }
+
+            $dataUser = [
+                'username'      => $this->request->getPost('username'),
+                'password'      => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
+                'id_level'      => 2, // Level Pasien (2)
+                'id_referensi'  => $idPasien // Hubungkan ke ID Pasien
+            ];
+
+            $modelUser->insert($dataUser);
+
+            if ($db->transStatus() === false) {
+                $db->transRollback();
+                session()->setFlashdata('error', 'Gagal mendaftar, coba lagi.');
+                return redirect()->to(base_url('register'));
+            } else {
+                $db->transCommit();
+                session()->setFlashdata('success', 'Registrasi berhasil! Silakan login.');
+                return redirect()->to(base_url('login'));
+            }
+        } catch (\Exception $e) {
+            $db->transRollback();
+            session()->setFlashdata('error', 'Terjadi kesalahan saat registrasi.');
+            return redirect()->to(base_url('register'));
+        }
+    }
 }

@@ -14,11 +14,7 @@
       <div class="card">
         <div class="card-header">
           <h4 class="card-title">Daftar Pasien</h4>
-          <div class="heading-elements">
-            <a href="<?= base_url('pasien/tambah') ?>" class="btn btn-primary btn-sm">
-              <i class="la la-plus"></i> Daftarkan Pasien
-            </a>
-          </div>
+
         </div>
         <div class="card-content">
           <div class="card-body">
@@ -46,10 +42,7 @@
                       <td><?= $p['tgl_lahir'] ? date('d/m/Y', strtotime($p['tgl_lahir'])) : '-' ?></td>
                       <td><?= esc($p['no_telp'] ?? '-') ?></td>
                       <td>
-                        <a href="<?= base_url('rekam_medis/tambah?id_pasien='.$p['id_pasien']) ?>"
-                           class="btn btn-sm btn-outline-success" title="Input Rekam Medis">
-                          <i class="la la-stethoscope"></i>
-                        </a>
+
                         <a href="<?= base_url('pasien/edit/'.$p['id_pasien']) ?>"
                            class="btn btn-sm btn-outline-warning" title="Edit"><i class="la la-edit"></i></a>
                         <a href="<?= base_url('pasien/hapus/'.$p['id_pasien']) ?>"

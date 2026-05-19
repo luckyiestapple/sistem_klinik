@@ -14,11 +14,13 @@
       <div class="card">
         <div class="card-header">
           <h4 class="card-title">Riwayat Berobat Pasien</h4>
+          <?php if (session()->get('id_level') == 4): ?>
           <div class="heading-elements">
             <a href="<?= base_url('rekam_medis/tambah') ?>" class="btn btn-primary btn-sm">
               <i class="la la-plus"></i> Input Rekam Medis
             </a>
           </div>
+          <?php endif; ?>
         </div>
         <div class="card-content">
           <div class="card-body">
@@ -48,11 +50,13 @@
                       <td>
                         <a href="<?= base_url('rekam_medis/detail/'.$r['id_rekam_medis']) ?>"
                            class="btn btn-sm btn-outline-info" title="Detail"><i class="la la-eye"></i></a>
+                        <?php if (session()->get('id_level') == 4): ?>
                         <a href="<?= base_url('rekam_medis/edit/'.$r['id_rekam_medis']) ?>"
                            class="btn btn-sm btn-outline-warning"><i class="la la-edit"></i></a>
                         <a href="<?= base_url('rekam_medis/hapus/'.$r['id_rekam_medis']) ?>"
                            class="btn btn-sm btn-outline-danger"
                            onclick="return confirm('Hapus rekam medis ini?')"><i class="la la-trash"></i></a>
+                        <?php endif; ?>
                       </td>
                     </tr>
                     <?php endforeach; ?>

@@ -13,6 +13,8 @@ $routes->get('/',       'Home::index');
 $routes->get('/login',  'Auth::index');
 $routes->post('/login', 'Auth::login');
 $routes->get('/logout', 'Auth::logout');
+$routes->get('/register', 'Auth::register');
+$routes->post('/register', 'Auth::processRegister');
 
 // ── Dashboard ─────────────────────────────────────────────
 $routes->get('/dashboard', 'Dashboard::index');

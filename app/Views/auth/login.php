@@ -48,6 +48,11 @@
                                         <?= session()->getFlashdata('error') ?>
                                     </div>
                                     <?php endif; ?>
+                                    <?php if(session()->getFlashdata('success')): ?>
+                                    <div class="alert alert-success mx-2">
+                                        <?= session()->getFlashdata('success') ?>
+                                    </div>
+                                    <?php endif; ?>
                                     <div class="card-body">
                                         <form class="form-horizontal" action="<?= base_url('login') ?>" method="POST" novalidate>
                                             <?= csrf_field() ?>
@@ -72,6 +77,9 @@
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-outline-info btn-block"><i class="ft-unlock"></i> Login</button>
+                                            <div class="text-center mt-2">
+                                                <p class="mb-0">Belum punya akun? <a href="<?= base_url('register') ?>" class="text-info font-weight-bold">Daftar Pasien</a></p>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>

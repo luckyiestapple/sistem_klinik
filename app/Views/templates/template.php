@@ -54,6 +54,43 @@
     <div class="main-menu menu-fixed menu-light menu-accordion menu-shadow">
         <div class="main-menu-content">
             <ul class="navigation navigation-main" id="main-menu-navigation">
+                <?php if (session()->get('id_level') == 2): // Menu Khusus Pasien ?>
+                <li class="nav-item <?= (current_url() == base_url('dashboard_pasien')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('dashboard_pasien') ?>">
+                        <i class="ft-home"></i><span class="menu-title">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <i class="ft-user"></i><span class="menu-title">Profil Saya</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <i class="ft-calendar"></i><span class="menu-title">Janji Temu</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <i class="ft-clipboard"></i><span class="menu-title">Resep Saya</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?= base_url('rekam_medis') ?>">
+                        <i class="ft-activity"></i><span class="menu-title">Rekam Medis</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <i class="ft-bell"></i><span class="menu-title">Notifikasi</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <i class="ft-settings"></i><span class="menu-title">Pengaturan</span>
+                    </a>
+                </li>
+                <?php else: // Menu Admin / Dokter / Pegawai ?>
                 <li class="nav-item <?= (current_url() == base_url('dashboard')) ? 'active' : '' ?>">
                     <a href="<?= base_url('dashboard') ?>">
                         <i class="ft-home"></i><span class="menu-title">Dashboard</span>
@@ -84,6 +121,7 @@
                         <i class="ft-package"></i><span class="menu-title">Data Obat</span>
                     </a>
                 </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>
