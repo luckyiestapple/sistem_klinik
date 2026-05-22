@@ -15,7 +15,15 @@ class Modelrekmed extends Model
         'id_dokter',
         'tgl_periksa',
         'keluhan',
-        'diagnosa'
+        'diagnosa',
+        'tensi',
+        'nadi',
+        'suhu',
+        'berat_badan',
+        'tinggi_badan',
+        'pemeriksaan_fisik',
+        'tgl_kontrol',
+        'id_antrean',
     ];
 
     /**

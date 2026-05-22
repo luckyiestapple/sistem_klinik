@@ -13,7 +13,7 @@
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/style.css') ?>">
     <?= $this->renderSection('css') ?>
 </head>
-<body class="vertical-layout vertical-menu 2-columns" data-open="click" data-menu="vertical-menu" data-col="2-columns">
+<body class="vertical-layout vertical-menu 2-columns menu-expanded fixed-navbar" data-open="click" data-menu="vertical-menu" data-col="2-columns">
     <!-- Navbar -->
     <nav class="header-navbar navbar-expand-md navbar navbar-with-menu fixed-top navbar-light navbar-border">
         <div class="navbar-wrapper">
@@ -54,17 +54,13 @@
     <div class="main-menu menu-fixed menu-light menu-accordion menu-shadow">
         <div class="main-menu-content">
             <ul class="navigation navigation-main" id="main-menu-navigation">
-                <?php if (session()->get('id_level') == 2): // Menu Khusus Pasien ?>
+                <?php if (session()->get('id_level') == 2): // Menu Pasien ?>
                 <li class="nav-item <?= (current_url() == base_url('dashboard_pasien')) ? 'active' : '' ?>">
                     <a href="<?= base_url('dashboard_pasien') ?>">
                         <i class="ft-home"></i><span class="menu-title">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-item <?= (current_url() == base_url('profil_pasien')) ? 'active' : '' ?>">
-                    <a href="<?= base_url('profil_pasien') ?>">
-                        <i class="ft-user"></i><span class="menu-title">Profil Saya</span>
-                    </a>
-                </li>
+
                 <li class="nav-item <?= (current_url() == base_url('antrian')) ? 'active' : '' ?>">
                     <a href="<?= base_url('antrian') ?>">
                         <i class="ft-calendar"></i><span class="menu-title">Ambil Antrian</span>
@@ -80,7 +76,40 @@
                         <i class="ft-activity"></i><span class="menu-title">Rekam Medis</span>
                     </a>
                 </li>
-                <?php else: // Menu Admin / Dokter / Pegawai ?>
+                <li class="nav-item <?= (current_url() == base_url('profil_pasien')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('profil_pasien') ?>">
+                        <i class="ft-user"></i><span class="menu-title">Profil Saya</span>
+                    </a>
+                </li>
+
+                <?php elseif (session()->get('id_level') == 3): // Menu Dokter ?>
+                <li class="nav-item <?= (current_url() == base_url('dashboard_dokter')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('dashboard_dokter') ?>">
+                        <i class="ft-home"></i><span class="menu-title">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item <?= (current_url() == base_url('dokter/antrian')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('dokter/antrian') ?>">
+                        <i class="ft-calendar"></i><span class="menu-title">Antrian Saya</span>
+                    </a>
+                </li>
+                <li class="nav-item <?= (current_url() == base_url('rekam_medis')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('rekam_medis') ?>">
+                        <i class="ft-file-text"></i><span class="menu-title">Rekam Medis</span>
+                    </a>
+                </li>
+                <li class="nav-item <?= (current_url() == base_url('resep')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('resep') ?>">
+                        <i class="ft-clipboard"></i><span class="menu-title">Resep</span>
+                    </a>
+                </li>
+                <li class="nav-item <?= (current_url() == base_url('dokter/profil')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('dokter/profil') ?>">
+                        <i class="ft-user"></i><span class="menu-title">Profil Dokter</span>
+                    </a>
+                </li>
+
+                <?php elseif (session()->get('id_level') == 1): // Menu Admin / Apoteker ?>
                 <li class="nav-item <?= (current_url() == base_url('dashboard')) ? 'active' : '' ?>">
                     <a href="<?= base_url('dashboard') ?>">
                         <i class="ft-home"></i><span class="menu-title">Dashboard</span>
@@ -91,24 +120,29 @@
                         <i class="ft-users"></i><span class="menu-title">Data Pasien</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item <?= (current_url() == base_url('dokter')) ? 'active' : '' ?>">
                     <a href="<?= base_url('dokter') ?>">
                         <i class="ft-user"></i><span class="menu-title">Data Dokter</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item <?= (current_url() == base_url('rekam_medis')) ? 'active' : '' ?>">
                     <a href="<?= base_url('rekam_medis') ?>">
                         <i class="ft-file-text"></i><span class="menu-title">Rekam Medis</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item <?= (current_url() == base_url('resep')) ? 'active' : '' ?>">
                     <a href="<?= base_url('resep') ?>">
                         <i class="ft-clipboard"></i><span class="menu-title">Resep</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item <?= (current_url() == base_url('obat')) ? 'active' : '' ?>">
                     <a href="<?= base_url('obat') ?>">
                         <i class="ft-package"></i><span class="menu-title">Data Obat</span>
+                    </a>
+                </li>
+                <li class="nav-item <?= (current_url() == base_url('admin/antrian')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('admin/antrian') ?>">
+                        <i class="ft-list"></i><span class="menu-title">Kelola Antrian</span>
                     </a>
                 </li>
                 <?php endif; ?>

@@ -10,7 +10,18 @@ class Modeldokter extends Model
     protected $primaryKey       = 'id_dokter';
     protected $useAutoIncrement = false;
     protected $returnType       = 'array';
-    protected $allowedFields    = ['id_dokter', 'nama', 'spesialisasi', 'alamat'];
+    protected $allowedFields    = [
+        'id_dokter',
+        'nama',
+        'spesialisasi',
+        'alamat',
+        'no_telp',
+        'email',
+        'sip_str',
+        'status_aktif',
+        'hari_praktek',
+        'jam_praktek',
+    ];
 
     /**
      * Generate ID Dokter otomatis (D001, D002, ...)

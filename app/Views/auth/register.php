@@ -18,6 +18,15 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
         }
+        body.blank-page {
+            overflow-y: auto !important;
+            height: auto !important;
+        }
+        .flexbox-container {
+            min-height: 100vh;
+            height: auto !important;
+            padding: 2rem 0;
+        }
     </style>
 </head>
 <body class="vertical-layout vertical-menu 1-column bg-custom-image blank-page">
@@ -26,7 +35,7 @@
             <div class="content-body">
                 <section class="flexbox-container">
                     <div class="col-12 d-flex align-items-center justify-content-center">
-                        <div class="col-md-6 col-10 box-shadow-2 p-0 my-3">
+                        <div class="col-md-8 col-11 box-shadow-2 p-0 my-3">
                             <div class="card border-grey border-lighten-3 px-1 py-1 m-0">
                                 <div class="card-header border-0 pb-0">
                                     <div class="text-left mb-1">
@@ -101,6 +110,59 @@
                                                     <i class="la la-map-marker"></i>
                                                 </div>
                                             </fieldset>
+
+                                            <!-- JKN / BPJS Option -->
+                                            <div class="form-group mb-2 ml-1">
+                                                <label class="font-weight-bold text-muted d-block">Apakah Anda memiliki Kartu JKN / BPJS Kesehatan?</label>
+                                                <div class="d-inline-block custom-control custom-radio mr-3">
+                                                    <input type="radio" name="is_bpjs" value="Ya" id="bpjs_ya" class="custom-control-input">
+                                                    <label class="custom-control-label font-weight-bold" for="bpjs_ya">Ya</label>
+                                                </div>
+                                                <div class="d-inline-block custom-control custom-radio">
+                                                    <input type="radio" name="is_bpjs" value="Tidak" id="bpjs_tidak" class="custom-control-input" checked>
+                                                    <label class="custom-control-label font-weight-bold" for="bpjs_tidak">Tidak</label>
+                                                </div>
+                                            </div>
+
+                                            <div id="bpjs_fields_container" style="display: none;">
+                                                <div class="card border-info mb-2 bg-light" style="border: 1px solid #0d9488; border-radius: 8px; background-color: #f0fdfa !important;">
+                                                    <div class="card-body p-2">
+                                                        <h6 class="text-teal font-weight-bold mb-2"><i class="ft-shield"></i> Data Kartu JKN / BPJS Kesehatan</h6>
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-12">
+                                                                <fieldset class="form-group position-relative has-icon-left">
+                                                                    <input type="text" class="form-control" name="no_bpjs" id="no_bpjs" placeholder="No. Kartu BPJS / NIK">
+                                                                    <div class="form-control-position">
+                                                                        <i class="la la-credit-card"></i>
+                                                                    </div>
+                                                                </fieldset>
+                                                                <fieldset class="form-group position-relative">
+                                                                    <select class="form-control" name="status_bpjs" id="status_bpjs">
+                                                                        <option value="aktif" selected>Status BPJS: Aktif</option>
+                                                                        <option value="tidak aktif">Status BPJS: Tidak Aktif</option>
+                                                                    </select>
+                                                                </fieldset>
+                                                            </div>
+                                                            <div class="col-md-6 col-12">
+                                                                <fieldset class="form-group position-relative has-icon-left">
+                                                                    <input type="text" class="form-control" name="faskes" id="faskes" placeholder="Faskes Tingkat I (FKTP)">
+                                                                    <div class="form-control-position">
+                                                                        <i class="la la-hospital-o"></i>
+                                                                    </div>
+                                                                </fieldset>
+                                                                <fieldset class="form-group position-relative">
+                                                                    <select class="form-control" name="kelas_rawat" id="kelas_rawat">
+                                                                        <option value="" disabled selected>Pilih Kelas Rawat JKN</option>
+                                                                        <option value="Kelas I">Kelas I</option>
+                                                                        <option value="Kelas II">Kelas II</option>
+                                                                        <option value="Kelas III">Kelas III</option>
+                                                                    </select>
+                                                                </fieldset>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             
                                             <button type="submit" class="btn btn-outline-info btn-block"><i class="ft-user-plus"></i> Daftar</button>
                                         </form>
@@ -116,5 +178,37 @@
     
     <script src="<?= base_url('app-assets/vendors/js/vendors.min.js') ?>"></script>
     <script src="<?= base_url('app-assets/js/core/app.js') ?>"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const bpjsYa = document.getElementById('bpjs_ya');
+            const bpjsTidak = document.getElementById('bpjs_tidak');
+            const bpjsContainer = document.getElementById('bpjs_fields_container');
+            const bpjsInputs = bpjsContainer.querySelectorAll('input, select');
+
+            function toggleBpjs() {
+                if (bpjsYa.checked) {
+                    bpjsContainer.style.display = 'block';
+                    bpjsInputs.forEach(input => {
+                        if (input.id !== 'status_bpjs' && input.id !== 'faskes') {
+                            input.setAttribute('required', 'required');
+                        }
+                    });
+                } else {
+                    bpjsContainer.style.display = 'none';
+                    bpjsInputs.forEach(input => {
+                        input.removeAttribute('required');
+                        if (input.tagName === 'SELECT' && input.id !== 'status_bpjs') {
+                            input.selectedIndex = 0;
+                        } else if (input.id !== 'status_bpjs') {
+                            input.value = '';
+                        }
+                    });
+                }
+            }
+
+            bpjsYa.addEventListener('change', toggleBpjs);
+            bpjsTidak.addEventListener('change', toggleBpjs);
+        });
+    </script>
 </body>
 </html>

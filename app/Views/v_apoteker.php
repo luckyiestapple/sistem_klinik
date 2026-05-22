@@ -13,7 +13,7 @@
                 <div class="card pull-up">
                     <div class="card-content">
                         <div class="card-body">
-                            <div class="media d-flex">
+                            <div class="med ia d-flex">
                                 <div class="media-body text-left">
                                     <h3 class="info"><?= $total_pasien ?></h3>
                                     <h6>Total Pasien</h6>

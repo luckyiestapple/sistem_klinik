@@ -16,6 +16,7 @@ class Modelantrean extends Model
         'tgl_antrean',
         'nomor_antrean',
         'status',
+        'keluhan',
     ];
 
     public function getAntreanByPasien($id_pasien)

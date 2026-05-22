@@ -16,8 +16,8 @@ class Obat extends BaseController
 
     private function authCheck()
     {
-        if (!session()->get('logged_in')) {
-            return redirect()->to(base_url('login'));
+        if (!session()->get('logged_in') || session()->get('id_level') != 1) {
+            return redirect()->to(base_url('login'))->with('error', 'Akses ditolak.');
         }
         return null;
     }
@@ -45,10 +45,14 @@ class Obat extends BaseController
         if ($r = $this->authCheck()) return $r;
 
         $this->model->insert([
-            'kode_obat' => $this->request->getPost('kode_obat'),
-            'nama_obat' => $this->request->getPost('nama_obat'),
-            'stok'      => $this->request->getPost('stok'),
-            'harga'     => $this->request->getPost('harga'),
+            'kode_obat'    => $this->request->getPost('kode_obat'),
+            'nama_obat'    => $this->request->getPost('nama_obat'),
+            'stok'         => $this->request->getPost('stok'),
+            'harga'        => $this->request->getPost('harga'),
+            'satuan'       => $this->request->getPost('satuan') ?: 'tablet',
+            'tgl_expired'  => $this->request->getPost('tgl_expired') ?: null,
+            'stok_minimum' => $this->request->getPost('stok_minimum') ?: 10,
+            'kandungan'    => $this->request->getPost('kandungan'),
         ]);
         session()->setFlashdata('success', 'Obat berhasil ditambahkan.');
         return redirect()->to('/obat');
@@ -70,10 +74,14 @@ class Obat extends BaseController
         if ($r = $this->authCheck()) return $r;
 
         $this->model->update($id, [
-            'kode_obat' => $this->request->getPost('kode_obat'),
-            'nama_obat' => $this->request->getPost('nama_obat'),
-            'stok'      => $this->request->getPost('stok'),
-            'harga'     => $this->request->getPost('harga'),
+            'kode_obat'    => $this->request->getPost('kode_obat'),
+            'nama_obat'    => $this->request->getPost('nama_obat'),
+            'stok'         => $this->request->getPost('stok'),
+            'harga'        => $this->request->getPost('harga'),
+            'satuan'       => $this->request->getPost('satuan') ?: 'tablet',
+            'tgl_expired'  => $this->request->getPost('tgl_expired') ?: null,
+            'stok_minimum' => $this->request->getPost('stok_minimum') ?: 10,
+            'kandungan'    => $this->request->getPost('kandungan'),
         ]);
         session()->setFlashdata('success', 'Data obat berhasil diperbarui.');
         return redirect()->to('/obat');
@@ -88,4 +96,3 @@ class Obat extends BaseController
         return redirect()->to('/obat');
     }
 }
-

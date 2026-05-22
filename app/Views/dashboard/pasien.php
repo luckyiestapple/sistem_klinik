@@ -29,6 +29,9 @@
     
     .text-orange { color: #ea580c !important; }
     .bg-orange-light { background-color: #ffedd5 !important; }
+
+    .text-danger-custom { color: #e11d48 !important; }
+    .bg-danger-custom-light { background-color: #ffe4e6 !important; }
     
     .icon-box {
         width: 48px;
@@ -64,13 +67,14 @@
         <div class="col-12 d-flex justify-content-between align-items-center">
             <div>
                 <h2 class="font-weight-bold mb-0">Halo, <?= esc($pasien['nama']) ?> 👋</h2>
-                <p class="text-muted">Semoga hari Anda menyenangkan dan sehat selalu.</p>
+                <p class="text-muted">NIK/No. BPJS: <strong><?= esc($pasien['no_bpjs'] ?: $pasien['id_pasien']) ?></strong>. Selamat datang di portal pasien.</p>
             </div>
         </div>
     </div>
 
-    <!-- Health Summary Cards -->
+    <!-- Health Summary Cards (Dynamic from Database) -->
     <div class="row">
+        <!-- Card 1: Tekanan Darah -->
         <div class="col-xl-3 col-md-6 col-12">
             <div class="card card-modern rounded-2xl mb-4">
                 <div class="card-body">
@@ -80,29 +84,47 @@
                         </div>
                         <div>
                             <p class="mb-0 text-muted font-small-3">Tekanan Darah</p>
-                            <h4 class="mb-0 font-weight-bold">120/80 <small>mmHg</small></h4>
+                            <h4 class="mb-0 font-weight-bold"><?= esc($latest_rekmed['tensi'] ?? 'Belum ada') ?></h4>
                         </div>
                     </div>
-                    <div class="mt-2 text-success font-small-2"><i class="ft-check-circle"></i> Normal (terakhir periksa)</div>
+                    <div class="mt-2 text-muted font-small-2">
+                        <?php if(!empty($latest_rekmed['tensi'])): ?>
+                            <i class="ft-check-circle text-success"></i> Terakhir diperiksa
+                        <?php else: ?>
+                            <i class="ft-info text-warning"></i> Belum ada rekam medis
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
+        
+        <!-- Card 2: Nadi & Suhu -->
         <div class="col-xl-3 col-md-6 col-12">
             <div class="card card-modern rounded-2xl mb-4">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="icon-box bg-blue-light text-blue mr-3">
-                            <i class="ft-droplet"></i>
+                            <i class="ft-activity"></i>
                         </div>
                         <div>
-                            <p class="mb-0 text-muted font-small-3">Gula Darah (Puasa)</p>
-                            <h4 class="mb-0 font-weight-bold">95 <small>mg/dL</small></h4>
+                            <p class="mb-0 text-muted font-small-3">Nadi / Suhu</p>
+                            <h4 class="mb-0 font-weight-bold">
+                                <?= esc($latest_rekmed['nadi'] ?? '-') ?> / <?= esc($latest_rekmed['suhu'] ?? '-') ?>
+                            </h4>
                         </div>
                     </div>
-                    <div class="mt-2 text-success font-small-2"><i class="ft-check-circle"></i> Normal (terakhir periksa)</div>
+                    <div class="mt-2 text-muted font-small-2">
+                        <?php if(!empty($latest_rekmed['nadi'])): ?>
+                            <i class="ft-check-circle text-success"></i> Terakhir diperiksa
+                        <?php else: ?>
+                            <i class="ft-info text-warning"></i> Belum ada rekam medis
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Card 3: BPJS Status -->
         <div class="col-xl-3 col-md-6 col-12">
             <div class="card card-modern rounded-2xl mb-4">
                 <div class="card-body">
@@ -111,39 +133,59 @@
                             <i class="ft-shield"></i>
                         </div>
                         <div>
-                            <p class="mb-0 text-muted font-small-3">Status BPJS</p>
-                            <h4 class="mb-0 font-weight-bold text-success">AKTIF</h4>
+                            <p class="mb-0 text-muted font-small-3">Kepesertaan BPJS</p>
+                            <?php 
+                            $statusBpjs = strtoupper($pasien['status_bpjs'] ?? 'TIDAK AKTIF');
+                            if ($statusBpjs === 'AKTIF'):
+                            ?>
+                                <h4 class="mb-0 font-weight-bold text-success">AKTIF</h4>
+                            <?php else: ?>
+                                <h4 class="mb-0 font-weight-bold text-danger">TIDAK AKTIF</h4>
+                            <?php endif; ?>
                         </div>
                     </div>
-                    <div class="mt-2 text-muted font-small-2">Faskes: Klinik Utama Sehat</div>
+                    <div class="mt-2 text-muted font-small-2 text-truncate">
+                        Faskes: <?= esc($pasien['faskes'] ?: 'Klinik Utama Sehat') ?>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Card 4: Kunjungan Terakhir -->
         <div class="col-xl-3 col-md-6 col-12">
             <div class="card card-modern rounded-2xl mb-4">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="icon-box bg-teal text-white mr-3">
-                            <i class="ft-star"></i>
+                            <i class="ft-calendar"></i>
                         </div>
                         <div>
                             <p class="mb-0 text-muted font-small-3">Kunjungan Terakhir</p>
-                            <h4 class="mb-0 font-weight-bold"><?= $latest_rekmed ? date('d/m/Y', strtotime($latest_rekmed['tgl_periksa'])) : '-' ?></h4>
+                            <h4 class="mb-0 font-weight-bold">
+                                <?= !empty($latest_rekmed['tgl_periksa']) ? date('d/m/Y', strtotime($latest_rekmed['tgl_periksa'])) : 'Belum Pernah' ?>
+                            </h4>
                         </div>
                     </div>
-                    <div class="mt-2 text-info font-small-2"><i class="ft-info"></i> Skrining kesehatan mandiri berkala</div>
+                    <div class="mt-2 text-muted font-small-2">
+                        <?php if ($latest_rekmed && !empty($latest_rekmed['tgl_kontrol'])): ?>
+                            <i class="ft-info text-info"></i> Kontrol: <?= date('d/m/Y', strtotime($latest_rekmed['tgl_kontrol'])) ?>
+                        <?php else: ?>
+                            <i class="ft-info text-muted"></i> Tidak ada kontrol dijadwalkan
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Antrean Terdekat & Resep Baru (Side-by-Side) -->
     <div class="row">
-        <!-- Highlight Card: Jadwal Kontrol -->
+        <!-- Highlight Card: Jadwal Kontrol / Antrean -->
         <div class="col-lg-6 col-12">
             <?php if (!empty($antrean)): ?>
                 <div class="card card-modern highlight-card rounded-2xl mb-4">
                     <div class="card-body p-4">
-                        <h5 class="text-white mb-3"><i class="ft-calendar"></i> Jadwal Kontrol Terdekat</h5>
+                        <h5 class="text-white mb-3"><i class="ft-calendar"></i> Antrean Aktif Hari Ini / Mendatang</h5>
                         <div class="row align-items-center">
                             <div class="col-md-8">
                                 <h3 class="text-white font-weight-bold"><?= esc($antrean['nama_dokter']) ?></h3>
@@ -152,8 +194,8 @@
                             </div>
                             <div class="col-md-4 text-center mt-3 mt-md-0">
                                 <div class="bg-white text-teal rounded p-2 mb-2 d-inline-block">
-                                    <span class="d-block font-small-2 font-weight-bold text-uppercase">No. Antrean</span>
-                                    <h2 class="mb-0 font-weight-bold"><?= esc($antrean['nomor_antrean']) ?></h2>
+                                    <span class="d-block font-small-2 font-weight-bold text-uppercase text-muted">No. Antrean</span>
+                                    <h2 class="mb-0 font-weight-bold text-teal"><?= esc($antrean['nomor_antrean']) ?></h2>
                                 </div>
                             </div>
                         </div>

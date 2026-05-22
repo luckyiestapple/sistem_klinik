@@ -27,16 +27,16 @@ class Auth extends BaseController
             ]);
 
             // Asumsi Level: 1 = Admin, 2 = Pasien, 3 = Pegawai, 4 = Dokter
-            // Sesuai request: Level 1 dan 3 (Admin dan Pegawai sama aja akses dashboard utama)
+            // Asumsi Level: 1 = Admin, 2 = Pasien, 4 = Dokter
             $id_level = $user['id_level'];
-            if ($id_level == 1 || $id_level == 3) {
+            if ($id_level == 1) {
                 return redirect()->to(base_url('dashboard'));
             } elseif ($id_level == 2) {
                 return redirect()->to(base_url('dashboard_pasien'));
-            } elseif ($id_level == 4) {
+            } elseif ($id_level == 3) {
                 return redirect()->to(base_url('dashboard_dokter'));
             } else {
-                return redirect()->to(base_url('dashboard')); // fallback
+                return redirect()->to(base_url('login'))->with('error', 'Akses ditolak.'); // fallback
             }
         } else {
             session()->setFlashdata('error', 'Username atau Password salah!');
@@ -65,13 +65,18 @@ class Auth extends BaseController
             $modelPasien = new \App\Models\Modelpasien();
             $idPasien = $modelPasien->generateID();
 
+            $isBpjs = $this->request->getPost('is_bpjs') === 'Ya';
             $dataPasien = [
                 'id_pasien' => $idPasien,
                 'nama'      => $this->request->getPost('nama'),
-                'jk'        => $this->request->getPost('jk'),
+                'jk'        => ($this->request->getPost('jk') == 'Laki-laki' || $this->request->getPost('jk') == 'L') ? 'L' : 'P',
                 'tgl_lahir' => $this->request->getPost('tgl_lahir'),
                 'no_telp'   => $this->request->getPost('no_telp'),
                 'alamat'    => $this->request->getPost('alamat'),
+                'no_bpjs'   => $isBpjs ? $this->request->getPost('no_bpjs') : null,
+                'status_bpjs' => $isBpjs ? $this->request->getPost('status_bpjs') : null,
+                'faskes'    => $isBpjs ? $this->request->getPost('faskes') : null,
+                'kelas_rawat' => $isBpjs ? $this->request->getPost('kelas_rawat') : null,
             ];
 
             $modelPasien->insert($dataPasien);
@@ -110,5 +115,58 @@ class Auth extends BaseController
             session()->setFlashdata('error', 'Terjadi kesalahan saat registrasi.');
             return redirect()->to(base_url('register'));
         }
+    }
+
+    public function lupaPassword()
+    {
+        return view('auth/lupa_password');
+    }
+
+    public function processLupaPassword()
+    {
+        $username = $this->request->getPost('username');
+        $no_telp = $this->request->getPost('no_telp');
+        $tgl_lahir = $this->request->getPost('tgl_lahir');
+        $password = $this->request->getPost('password');
+        $confirm_password = $this->request->getPost('confirm_password');
+
+        if (empty($username) || empty($no_telp) || empty($tgl_lahir) || empty($password)) {
+            session()->setFlashdata('error', 'Semua kolom wajib diisi!');
+            return redirect()->to(base_url('lupa_password'));
+        }
+
+        if (strlen($password) < 6) {
+            session()->setFlashdata('error', 'Password minimal terdiri dari 6 karakter!');
+            return redirect()->to(base_url('lupa_password'));
+        }
+
+        if ($password !== $confirm_password) {
+            session()->setFlashdata('error', 'Konfirmasi password baru tidak cocok!');
+            return redirect()->to(base_url('lupa_password'));
+        }
+
+        $userModel = new UserModel();
+        $user = $userModel->where('username', $username)->where('id_level', 2)->first();
+
+        if (!$user) {
+            session()->setFlashdata('error', 'Data verifikasi salah atau Username tidak terdaftar sebagai Pasien!');
+            return redirect()->to(base_url('lupa_password'));
+        }
+
+        $pasienModel = new \App\Models\Modelpasien();
+        $pasien = $pasienModel->find($user['id_referensi']);
+
+        if (!$pasien || $pasien['no_telp'] !== $no_telp || $pasien['tgl_lahir'] !== $tgl_lahir) {
+            session()->setFlashdata('error', 'Data verifikasi (Nomor Telepon atau Tanggal Lahir) salah!');
+            return redirect()->to(base_url('lupa_password'));
+        }
+
+        // Update Password
+        $userModel->update($user['id_user'], [
+            'password' => password_hash($password, PASSWORD_DEFAULT)
+        ]);
+
+        session()->setFlashdata('success', 'Password berhasil diubah! Silakan login dengan password baru.');
+        return redirect()->to(base_url('login'));
     }
 }

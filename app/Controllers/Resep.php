@@ -24,7 +24,12 @@ class Resep extends BaseController
     private function authCheck()
     {
         if (!session()->get('logged_in')) {
-            return redirect()->to(base_url('login'));
+            return redirect()->to(base_url('login'))->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        $level = session()->get('id_level');
+        if ($level != 1 && $level != 3) {
+            return redirect()->to(base_url('login'))->with('error', 'Akses ditolak.');
         }
         return null;
     }
@@ -33,17 +38,32 @@ class Resep extends BaseController
     {
         if ($r = $this->authCheck()) return $r;
 
+        $level = session()->get('id_level');
+        $idReferansi = session()->get('id_referensi');
+
+        $query = $this->db->table('tb_resep r')
+            ->select('r.*, p.nama AS nama_pasien, d.nama AS nama_dokter, d.spesialisasi')
+            ->join('tb_pasien p', 'p.id_pasien = r.id_pasien')
+            ->join('tb_dokter d', 'd.id_dokter = r.id_dokter');
+
+        if ($level == 3) {
+            // Dokter only sees their own prescriptions
+            $query->where('r.id_dokter', $idReferansi);
+        }
+
+        $resep = $query->orderBy('r.tgl_resep', 'DESC')->get()->getResultArray();
+
         $data = [
             'title'      => 'Daftar Resep',
             'breadcrumb' => 'Resep',
-            'resep'      => $this->model->getResepLengkap(),
+            'resep'      => $resep,
+            'is_admin'   => ($level == 1),
         ];
         return view('v_resep', $data);
     }
 
     /**
      * Tambah resep berdasarkan rekam medis yang ada.
-     * (:num) = id_rekam_medis
      */
     public function tambah($idRekamMedis)
     {
@@ -59,10 +79,24 @@ class Resep extends BaseController
             ->where('rm.id_rekam_medis', $idRekamMedis)
             ->get()->getRowArray();
 
+        if (!$rekmed) {
+            session()->setFlashdata('error', 'Rekam medis tidak ditemukan.');
+            return redirect()->to('/rekam_medis');
+        }
+
+        // Check if Doctor is trying to prescribe for another doctor's record
+        if (session()->get('id_level') == 3 && $rekmed['id_dokter'] != session()->get('id_referensi')) {
+            session()->setFlashdata('error', 'Akses ditolak.');
+            return redirect()->to('/rekam_medis');
+        }
+
+        // Only show active and in-stock medicines
+        $obat = $obatModel->where('stok >', 0)->findAll();
+
         $data = [
-            'title'      => 'Buat Resep',
+            'title'       => 'Buat Resep',
             'rekam_medis' => $rekmed,
-            'obat'       => $obatModel->findAll(),
+            'obat'        => $obat,
         ];
         return view('resep/v_tambah_resep', $data);
     }
@@ -71,55 +105,86 @@ class Resep extends BaseController
     {
         if ($r = $this->authCheck()) return $r;
 
-        $idRekamMedis = $this->request->getPost('id_rekam_medis');
-        $idObatArr    = $this->request->getPost('id_obat');
-        $jumlahArr    = $this->request->getPost('jumlah');
-        $dosisArr     = $this->request->getPost('dosis');
-        $hargaArr     = $this->request->getPost('harga_satuan');
+        $db = \Config\Database::connect();
+        $db->transBegin();
 
-        // Hitung total
-        $total = 0;
-        foreach ($jumlahArr as $i => $jml) {
-            $total += (int)$jml * (float)$hargaArr[$i];
-        }
+        try {
+            $idRekamMedis = $this->request->getPost('id_rekam_medis');
+            $idObatArr    = $this->request->getPost('id_obat');
+            $jumlahArr    = $this->request->getPost('jumlah');
+            $dosisArr     = $this->request->getPost('dosis');
+            $hargaArr     = $this->request->getPost('harga_satuan');
 
-        // Ambil data pasien & dokter dari rekmed untuk resep
-        $rekmedModel = new Modelrekmed();
-        $rm = $rekmedModel->find($idRekamMedis);
+            if (empty($idObatArr)) {
+                $db->transRollback();
+                session()->setFlashdata('error', 'Pilih minimal satu obat!');
+                return redirect()->back()->withInput();
+            }
 
-        // Simpan header resep (id_resep auto increment)
-        $idResep = $this->model->insert([
-            'id_pasien'   => $rm['id_pasien'],
-            'id_dokter'   => $rm['id_dokter'],
-            'tgl_resep'   => date('Y-m-d'),
-            'total_harga' => $total,
-        ], true);
+            // Hitung total
+            $total = 0;
+            foreach ($jumlahArr as $i => $jml) {
+                $total += (int)$jml * (float)$hargaArr[$i];
+            }
 
-        // Simpan detail resep & Update Stok Obat
-        $obatModel = new \App\Models\Modelobat();
-        foreach ($idObatArr as $i => $idObat) {
-            // Simpan detail
-            $this->detailModel->insert([
-                'kode_resep'   => $idResep,
-                'kode_obat'    => $idObat,
-                'jumlah'       => $jumlahArr[$i],
-                'dosis'        => $dosisArr[$i],
-                'harga'        => $hargaArr[$i],
-            ]);
+            // Ambil data pasien & dokter dari rekmed
+            $rekmedModel = new Modelrekmed();
+            $rm = $rekmedModel->find($idRekamMedis);
 
-            // Update stok obat
-            $obat = $obatModel->find($idObat);
-            if ($obat) {
+            // Simpan header resep (id_resep auto increment)
+            $idResep = $this->model->insert([
+                'id_pasien'   => $rm['id_pasien'],
+                'id_dokter'   => $rm['id_dokter'],
+                'tgl_resep'   => date('Y-m-d'),
+                'total_harga' => $total,
+                'status'      => 'menunggu', // default status
+            ], true);
+
+            // Simpan detail resep & Update Stok Obat
+            $obatModel = new Modelobat();
+            foreach ($idObatArr as $i => $idObat) {
+                // Check stock
+                $obat = $obatModel->find($idObat);
+                if (!$obat) {
+                    $db->transRollback();
+                    session()->setFlashdata('error', 'Obat tidak ditemukan.');
+                    return redirect()->back()->withInput();
+                }
+
+                if ((int)$obat['stok'] < (int)$jumlahArr[$i]) {
+                    $db->transRollback();
+                    session()->setFlashdata('error', 'Stok obat "' . esc($obat['nama_obat']) . '" tidak cukup! (Tersedia: ' . $obat['stok'] . ')');
+                    return redirect()->back()->withInput();
+                }
+
+                // Simpan detail
+                $this->detailModel->insert([
+                    'kode_resep'   => $idResep,
+                    'kode_obat'    => $idObat,
+                    'jumlah'       => $jumlahArr[$i],
+                    'dosis'        => $dosisArr[$i],
+                    'harga'        => $hargaArr[$i],
+                ]);
+
+                // Update stok obat
                 $newStok = (int)$obat['stok'] - (int)$jumlahArr[$i];
                 $obatModel->update($idObat, ['stok' => $newStok]);
             }
+
+            if ($db->transStatus() === false) {
+                $db->transRollback();
+                session()->setFlashdata('error', 'Gagal menyimpan resep.');
+                return redirect()->back()->withInput();
+            } else {
+                $db->transCommit();
+                session()->setFlashdata('success', 'Resep berhasil dibuat.');
+                return redirect()->to('/resep');
+            }
+        } catch (\Exception $e) {
+            $db->transRollback();
+            session()->setFlashdata('error', 'Error: ' . $e->getMessage());
+            return redirect()->back()->withInput();
         }
-
-        // Di SQL dump tb_rekam_medis tidak ada kolom status.
-        // session()->setFlashdata('success', 'Resep berhasil dibuat.');
-
-        session()->setFlashdata('success', 'Resep berhasil dibuat.');
-        return redirect()->to('/resep');
     }
 
     public function detail($id)
@@ -127,13 +192,23 @@ class Resep extends BaseController
         if ($r = $this->authCheck()) return $r;
 
         $resep = $this->db->table('tb_resep r')
-            ->select('r.*, p.nama AS nama_pasien, d.nama AS nama_dokter, d.spesialisasi')
+            ->select('r.*, p.nama AS nama_pasien, p.jk, p.tgl_lahir, p.no_telp, d.nama AS nama_dokter, d.spesialisasi')
             ->join('tb_pasien p', 'p.id_pasien = r.id_pasien')
             ->join('tb_dokter d', 'd.id_dokter = r.id_dokter')
             ->where('r.id_resep', $id)
             ->get()->getRowArray();
 
-        // Subtotal dihitung di query: jumlah * harga_satuan
+        if (!$resep) {
+            session()->setFlashdata('error', 'Resep tidak ditemukan.');
+            return redirect()->to('/resep');
+        }
+
+        // Access check for Doctors
+        if (session()->get('id_level') == 3 && $resep['id_dokter'] != session()->get('id_referensi')) {
+            session()->setFlashdata('error', 'Akses ditolak.');
+            return redirect()->to('/resep');
+        }
+
         $detail = $this->detailModel->getDetailByResep($id);
 
         $data = [
@@ -144,6 +219,24 @@ class Resep extends BaseController
         return view('resep/v_detail_resep', $data);
     }
 
+    public function updateStatus($id)
+    {
+        if ($r = $this->authCheck()) return $r;
 
+        // Only Admin (Apoteker) can update resep status
+        if (session()->get('id_level') != 1) {
+            session()->setFlashdata('error', 'Akses ditolak. Hanya Apoteker/Admin yang dapat memproses resep.');
+            return redirect()->back();
+        }
+
+        $status = $this->request->getPost('status');
+        if (in_array($status, ['menunggu', 'diproses', 'selesai'])) {
+            $this->model->update($id, ['status' => $status]);
+            session()->setFlashdata('success', 'Status resep berhasil diubah menjadi: ' . ucfirst($status));
+        } else {
+            session()->setFlashdata('error', 'Status tidak valid.');
+        }
+
+        return redirect()->to('/resep');
+    }
 }
-

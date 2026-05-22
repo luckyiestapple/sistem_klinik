@@ -58,9 +58,15 @@
                             </div>
 
                             <!-- Pilih Tanggal Kunjungan -->
-                            <div class="form-group mb-4">
+                            <div class="form-group mb-3">
                                 <label for="tgl_antrean" class="font-weight-bold text-dark">Tanggal Kunjungan</label>
                                 <input type="date" class="form-control rounded-pill" id="tgl_antrean" name="tgl_antrean" min="<?= date('Y-m-d') ?>" required>
+                            </div>
+
+                            <!-- Keluhan / Gejala -->
+                            <div class="form-group mb-4">
+                                <label for="keluhan" class="font-weight-bold text-dark">Keluhan Utama / Gejala Awal</label>
+                                <textarea name="keluhan" id="keluhan" class="form-control" rows="3" placeholder="Contoh: Demam tinggi sejak 2 hari yang lalu..." required></textarea>
                             </div>
 
                             <button type="submit" class="btn btn-teal btn-block rounded-pill font-weight-bold py-2">
@@ -104,9 +110,13 @@
                                                 </td>
                                                 <td class="text-center align-middle">
                                                     <?php if ($ra['status'] === 'menunggu'): ?>
-                                                        <span class="badge badge-warning">Menunggu</span>
-                                                    <?php else: ?>
+                                                        <span class="badge badge-danger">Menunggu</span>
+                                                    <?php elseif ($ra['status'] === 'dipanggil'): ?>
+                                                        <span class="badge badge-warning text-white">Dipanggil</span>
+                                                    <?php elseif ($ra['status'] === 'selesai'): ?>
                                                         <span class="badge badge-success">Selesai</span>
+                                                    <?php else: ?>
+                                                        <span class="badge badge-secondary">Batal</span>
                                                     <?php endif; ?>
                                                 </td>
                                             </tr>
@@ -148,7 +158,7 @@
             filteredDoctors.forEach(doc => {
                 const opt = document.createElement('option');
                 opt.value = doc.id_dokter;
-                opt.textContent = doc.nama;
+                opt.textContent = doc.nama + ' (Jam: ' + (doc.jam_praktek || '-') + ')';
                 dokterSelect.appendChild(opt);
             });
         } else {

@@ -12,8 +12,6 @@
     .bg-teal { background-color: #0d9488 !important; color: white !important; }
     .btn-teal { background-color: #0d9488 !important; border-color: #0d9488 !important; color: white !important; }
     .btn-teal:hover { background-color: #0f766e !important; color: white !important; }
-    .btn-outline-teal { color: #0d9488 !important; border-color: #0d9488 !important; }
-    .btn-outline-teal:hover { background-color: #0d9488 !important; color: white !important; }
 </style>
 <?= $this->endSection() ?>
 
@@ -33,9 +31,11 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
+                                            <th>No. Resep</th>
                                             <th>Tanggal Resep</th>
                                             <th>Dokter Meresepkan</th>
-                                            <th>Total Harga</th>
+                                            <th>Total Biaya</th>
+                                            <th class="text-center">Status</th>
                                             <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
@@ -43,9 +43,22 @@
                                         <?php $no = 1; foreach ($riwayatResep as $r): ?>
                                             <tr>
                                                 <td class="align-middle"><?= $no++ ?></td>
+                                                <td class="align-middle"><strong>RSP-<?= str_pad($r['id_resep'], 4, '0', STR_PAD_LEFT) ?></strong></td>
                                                 <td class="align-middle"><?= date('d/m/Y', strtotime($r['tgl_resep'])) ?></td>
-                                                <td class="align-middle"><?= esc($r['nama_dokter']) ?></td>
+                                                <td class="align-middle"><strong><?= esc($r['nama_dokter']) ?></strong></td>
                                                 <td class="align-middle">Rp <?= number_format($r['total_harga'], 0, ',', '.') ?></td>
+                                                <td class="text-center align-middle">
+                                                    <?php 
+                                                    $status = $r['status'] ?? 'menunggu';
+                                                    if ($status === 'selesai'): 
+                                                    ?>
+                                                        <span class="badge badge-success">Selesai / Diambil</span>
+                                                    <?php elseif ($status === 'diproses'): ?>
+                                                        <span class="badge badge-warning text-white">Sedang Diproses</span>
+                                                    <?php else: ?>
+                                                        <span class="badge badge-danger">Menunggu Apoteker</span>
+                                                    <?php endif; ?>
+                                                </td>
                                                 <td class="text-center align-middle">
                                                     <a href="<?= base_url('resep_pasien/detail/'.$r['id_resep']) ?>" class="btn btn-sm btn-teal rounded-pill px-3">
                                                         <i class="ft-eye"></i> Detail Obat

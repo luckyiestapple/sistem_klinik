@@ -75,6 +75,9 @@
                                                         <label for="remember-me"> Ingat Saya</label>
                                                     </fieldset>
                                                 </div>
+                                                <div class="col-md-6 col-12 text-center text-sm-right">
+                                                    <a href="<?= base_url('lupa_password') ?>" class="card-link text-info">Lupa Password?</a>
+                                                </div>
                                             </div>
                                             <button type="submit" class="btn btn-outline-info btn-block"><i class="ft-unlock"></i> Login</button>
                                             <div class="text-center mt-2">

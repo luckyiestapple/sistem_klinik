@@ -17,6 +17,15 @@ class Modelpasien extends Model
         'tgl_lahir',
         'no_telp',
         'alamat',
+        'no_bpjs',
+        'status_bpjs',
+        'faskes',
+        'kelas_rawat',
+        'gol_darah',
+        'alergi_obat',
+        'riwayat_penyakit',
+        'kontak_darurat_nama',
+        'kontak_darurat_telp',
     ];
     protected $useTimestamps = false; // Not in SQL dump
 

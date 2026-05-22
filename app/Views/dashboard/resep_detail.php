@@ -23,7 +23,7 @@
         <div class="col-lg-8 col-12 mx-auto">
             <div class="card card-modern rounded-2xl">
                 <div class="card-header bg-teal rounded-2xl-top d-flex justify-content-between align-items-center">
-                    <h4 class="card-title text-white font-weight-bold mb-0"><i class="ft-clipboard"></i> Detail Resep Obat</h4>
+                    <h4 class="card-title text-white font-weight-bold mb-0"><i class="ft-clipboard"></i> Detail Resep Obat Saya</h4>
                     <a href="<?= base_url('resep_pasien') ?>" class="btn btn-sm btn-light rounded-pill px-3">Kembali</a>
                 </div>
                 <div class="card-content">
@@ -37,7 +37,18 @@
                             </div>
                             <div class="col-sm-6 text-sm-right">
                                 <span class="d-block text-muted font-small-3">Tanggal Resep</span>
-                                <strong class="text-dark"><?= date('d F Y', strtotime($resep['tgl_resep'])) ?></strong>
+                                <strong class="text-dark d-block mb-1"><?= date('d F Y', strtotime($resep['tgl_resep'])) ?></strong>
+                                <span class="d-block text-muted font-small-3">Status</span>
+                                <?php 
+                                $status = $resep['status'] ?? 'menunggu';
+                                if ($status === 'selesai'): 
+                                ?>
+                                    <span class="badge badge-success font-medium-1">Selesai / Diambil</span>
+                                <?php elseif ($status === 'diproses'): ?>
+                                    <span class="badge badge-warning text-white font-medium-1">Sedang Diproses</span>
+                                <?php else: ?>
+                                    <span class="badge badge-danger font-medium-1">Menunggu Apoteker</span>
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -59,7 +70,7 @@
                                         <?php foreach ($details as $d): ?>
                                             <tr>
                                                 <td class="align-middle font-weight-bold text-dark"><?= esc($d['nama_obat']) ?></td>
-                                                <td class="align-middle"><?= esc($d['dosis']) ?></td>
+                                                <td class="align-middle"><?= esc($d['dosis'] ?? '-') ?></td>
                                                 <td class="text-center align-middle"><?= esc($d['jumlah']) ?></td>
                                                 <td class="text-right align-middle">Rp <?= number_format($d['harga'], 0, ',', '.') ?></td>
                                                 <td class="text-right align-middle font-weight-bold">Rp <?= number_format($d['subtotal'], 0, ',', '.') ?></td>

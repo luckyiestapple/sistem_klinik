@@ -15,6 +15,10 @@ class Modelobat extends Model
         'nama_obat',
         'stok',
         'harga',
+        'satuan',
+        'tgl_expired',
+        'stok_minimum',
+        'kandungan',
     ];
 
     /**

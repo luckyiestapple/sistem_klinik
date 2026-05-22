@@ -4,23 +4,41 @@
 <div class="content-header row">
   <div class="content-header-left col-12 mb-2">
     <h3 class="content-header-title">Rekam Medis</h3>
-    <ol class="breadcrumb"><li class="breadcrumb-item">Klinik</li><li class="breadcrumb-item active">Rekam Medis</li></ol>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">Klinik</li>
+      <li class="breadcrumb-item active">Rekam Medis</li>
+    </ol>
   </div>
 </div>
 
 <div class="content-body">
+  <?php if(session()->getFlashdata('success')): ?>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <?= session()->getFlashdata('success') ?>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  <?php endif; ?>
+  <?php if(session()->getFlashdata('error')): ?>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <?= session()->getFlashdata('error') ?>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  <?php endif; ?>
+
   <div class="row">
     <div class="col-12">
       <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
           <h4 class="card-title">Riwayat Berobat Pasien</h4>
-          <?php if (session()->get('id_level') == 4): ?>
           <div class="heading-elements">
-            <a href="<?= base_url('rekam_medis/tambah') ?>" class="btn btn-primary btn-sm">
+            <a href="<?= base_url('rekam_medis/tambah') ?>" class="btn btn-primary font-weight-bold">
               <i class="la la-plus"></i> Input Rekam Medis
             </a>
           </div>
-          <?php endif; ?>
         </div>
         <div class="card-content">
           <div class="card-body">
@@ -30,10 +48,11 @@
                   <tr>
                     <th>#</th>
                     <th>Pasien</th>
-                    <th>Dokter</th>
+                    <th>Dokter Pemeriksa</th>
                     <th>Spesialisasi</th>
                     <th>Tanggal Periksa</th>
-                    <th>Keluhan</th>
+                    <th>Keluhan Utama</th>
+                    <th>Diagnosa</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -42,21 +61,24 @@
                     <?php foreach ($rekam_medis as $r): ?>
                     <tr>
                       <td><?= $no++ ?></td>
-                      <td><?= esc($r['nama_pasien']) ?></td>
+                      <td><strong><?= esc($r['nama_pasien']) ?></strong></td>
                       <td><?= esc($r['nama_dokter']) ?></td>
-                      <td><span class="badge badge-light"><?= esc($r['spesialisasi']) ?></span></td>
+                      <td><span class="badge badge-light-info">Poli <?= esc($r['spesialisasi']) ?></span></td>
                       <td><?= date('d/m/Y', strtotime($r['tgl_periksa'])) ?></td>
                       <td class="text-truncate" style="max-width:180px;"><?= esc($r['keluhan']) ?></td>
+                      <td class="font-weight-bold text-success"><?= esc($r['diagnosa']) ?></td>
                       <td>
-                        <a href="<?= base_url('rekam_medis/detail/'.$r['id_rekam_medis']) ?>"
-                           class="btn btn-sm btn-outline-info" title="Detail"><i class="la la-eye"></i></a>
-                        <?php if (session()->get('id_level') == 4): ?>
-                        <a href="<?= base_url('rekam_medis/edit/'.$r['id_rekam_medis']) ?>"
-                           class="btn btn-sm btn-outline-warning"><i class="la la-edit"></i></a>
-                        <a href="<?= base_url('rekam_medis/hapus/'.$r['id_rekam_medis']) ?>"
-                           class="btn btn-sm btn-outline-danger"
-                           onclick="return confirm('Hapus rekam medis ini?')"><i class="la la-trash"></i></a>
-                        <?php endif; ?>
+                        <div class="btn-group btn-group-sm">
+                          <a href="<?= base_url('rekam_medis/detail/'.$r['id_rekam_medis']) ?>"
+                             class="btn btn-info text-white" title="Detail"><i class="la la-eye"></i> Detail</a>
+                          <a href="<?= base_url('rekam_medis/edit/'.$r['id_rekam_medis']) ?>"
+                             class="btn btn-warning text-white" title="Edit"><i class="la la-edit"></i> Edit</a>
+                          <?php if (session()->get('id_level') == 1): ?>
+                            <a href="<?= base_url('rekam_medis/hapus/'.$r['id_rekam_medis']) ?>"
+                               class="btn btn-danger" title="Hapus"
+                               onclick="return confirm('Hapus rekam medis ini?')"><i class="la la-trash"></i> Hapus</a>
+                          <?php endif; ?>
+                        </div>
                       </td>
                     </tr>
                     <?php endforeach; ?>
@@ -74,4 +96,3 @@
 </div>
 
 <?= $this->endSection() ?>
-

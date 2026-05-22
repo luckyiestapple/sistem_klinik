@@ -15,6 +15,7 @@ class Modelresep extends Model
         'id_dokter',
         'tgl_resep',
         'total_harga',
+        'status',
     ];
 
     /**

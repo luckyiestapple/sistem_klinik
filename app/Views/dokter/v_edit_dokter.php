@@ -12,34 +12,125 @@
 </div>
 
 <div class="content-body">
+  <?php if(session()->getFlashdata('error')): ?>
+  <div class="alert alert-danger mx-2">
+      <?= session()->getFlashdata('error') ?>
+  </div>
+  <?php endif; ?>
+
   <div class="row">
-    <div class="col-md-8 offset-md-2">
+    <div class="col-md-10 offset-md-1 col-12">
       <div class="card">
-        <div class="card-header"><h4 class="card-title">Form Edit Dokter</h4></div>
+        <div class="card-header"><h4 class="card-title">Form Edit Dokter: <?= esc($dokter['nama']) ?></h4></div>
         <div class="card-content">
           <div class="card-body">
             <form action="<?= base_url('dokter/update/'.$dokter['id_dokter']) ?>" method="POST">
               <?= csrf_field() ?>
-              <div class="form-group">
-                <label>Nama Dokter <span class="text-danger">*</span></label>
-                <input type="text" name="nama_dokter" class="form-control"
-                       value="<?= esc($dokter['nama']) ?>" required>
+              
+              <h5 class="form-section text-info"><i class="la la-user-md"></i> 1. Profil Dokter</h5>
+              <div class="row">
+                <div class="col-md-6 col-12">
+                  <div class="form-group">
+                    <label>Nama Dokter <span class="text-danger">*</span></label>
+                    <input type="text" name="nama_dokter" class="form-control" value="<?= esc($dokter['nama']) ?>" required>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12">
+                  <div class="form-group">
+                    <label>Spesialisasi <span class="text-danger">*</span></label>
+                    <select name="spesialisasi" class="form-control" required>
+                      <?php $specs = ['Umum','Anak','Gigi','Kandungan','Jantung','Kulit','Mata','THT','Ortopedi','Syaraf']; ?>
+                      <?php foreach ($specs as $s): ?>
+                      <option value="<?= $s ?>" <?= $dokter['spesialisasi'] === $s ? 'selected' : '' ?>><?= $s ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12">
+                  <div class="form-group">
+                    <label>No. SIP / STR (Opsional)</label>
+                    <input type="text" name="sip_str" class="form-control" value="<?= esc($dokter['sip_str'] ?? '') ?>">
+                  </div>
+                </div>
+                <div class="col-md-6 col-12">
+                  <div class="form-group">
+                    <label>Status Aktif</label>
+                    <select name="status_aktif" class="form-control">
+                      <option value="aktif" <?= ($dokter['status_aktif'] ?? 'aktif') === 'aktif' ? 'selected' : '' ?>>Aktif</option>
+                      <option value="nonaktif" <?= ($dokter['status_aktif'] ?? 'aktif') === 'nonaktif' ? 'selected' : '' ?>>Non-Aktif</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12">
+                  <div class="form-group">
+                    <label>No. Telepon / HP</label>
+                    <input type="text" name="no_telp" class="form-control" value="<?= esc($dokter['no_telp'] ?? '') ?>">
+                  </div>
+                </div>
+                <div class="col-md-6 col-12">
+                  <div class="form-group">
+                    <label>Email (Opsional)</label>
+                    <input type="email" name="email" class="form-control" value="<?= esc($dokter['email'] ?? '') ?>">
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-group">
+                    <label>Alamat Lengkap</label>
+                    <textarea name="alamat" class="form-control" rows="2"><?= esc($dokter['alamat'] ?? '') ?></textarea>
+                  </div>
+                </div>
               </div>
-              <div class="form-group">
-                <label>Spesialisasi <span class="text-danger">*</span></label>
-                <select name="spesialisasi" class="form-control" required>
-                  <?php $specs = ['Umum','Anak','Gigi','Kandungan','Jantung','Kulit','Mata','THT','Ortopedi','Syaraf']; ?>
-                  <?php foreach ($specs as $s): ?>
-                  <option value="<?= $s ?>" <?= $dokter['spesialisasi'] === $s ? 'selected' : '' ?>><?= $s ?></option>
-                  <?php endforeach; ?>
-                </select>
+
+              <h5 class="form-section text-info mt-3"><i class="la la-clock-o"></i> 2. Jadwal Praktek Sederhana</h5>
+              <div class="row">
+                <div class="col-md-6 col-12">
+                  <div class="form-group">
+                    <label>Hari Praktek</label>
+                    <input type="text" name="hari_praktek" class="form-control" value="<?= esc($dokter['hari_praktek'] ?? '') ?>">
+                  </div>
+                </div>
+                <div class="col-md-6 col-12">
+                  <div class="form-group">
+                    <label>Jam Praktek</label>
+                    <input type="text" name="jam_praktek" class="form-control" value="<?= esc($dokter['jam_praktek'] ?? '') ?>">
+                  </div>
+                </div>
               </div>
-              <div class="form-group">
-                <label>Alamat</label>
-                <textarea name="alamat" class="form-control" rows="3"><?= esc($dokter['alamat'] ?? '') ?></textarea>
-              </div>
-              <div class="form-group mt-2">
-                <button type="submit" class="btn btn-warning"><i class="la la-save"></i> Update</button>
+
+              <h5 class="form-section text-info mt-3"><i class="la la-key"></i> 3. Akun Login Dokter</h5>
+              <?php if ($has_account): ?>
+                <div class="alert alert-success font-small-3">
+                  <i class="la la-check-circle"></i>
+                  Dokter ini telah terdaftar memiliki akun login Dokter dengan Username: <strong><?= esc($account['username']) ?></strong>.
+                </div>
+              <?php else: ?>
+                <div class="form-group">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="buat_akun" name="buat_akun" value="1" onchange="toggleAccountFields(this)">
+                    <label class="custom-control-label font-weight-bold" for="buat_akun">Buatkan Akun Login Dokter</label>
+                  </div>
+                </div>
+
+                <div id="account_fields" style="display: none;" class="bg-light p-3 rounded mb-3 border">
+                  <div class="row">
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label>Username <span class="text-danger">*</span></label>
+                        <input type="text" name="username" id="username_field" class="form-control" placeholder="Username untuk login dokter">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label>Password <span class="text-danger">*</span></label>
+                        <input type="password" name="password" id="password_field" class="form-control" placeholder="Password minimal 6 karakter">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <?php endif; ?>
+
+              <div class="form-group mt-3 border-top pt-3">
+                <button type="submit" class="btn btn-warning text-white"><i class="la la-save"></i> Perbarui Dokter</button>
                 <a href="<?= base_url('dokter') ?>" class="btn btn-secondary ml-1">Batal</a>
               </div>
             </form>
@@ -52,3 +143,21 @@
 
 <?= $this->endSection() ?>
 
+<?= $this->section('script') ?>
+<script>
+function toggleAccountFields(checkbox) {
+    var fields = document.getElementById('account_fields');
+    var username = document.getElementById('username_field');
+    var password = document.getElementById('password_field');
+    if (checkbox.checked) {
+        fields.style.display = 'block';
+        username.required = true;
+        password.required = true;
+    } else {
+        fields.style.display = 'none';
+        username.required = false;
+        password.required = false;
+    }
+}
+</script>
+<?= $this->endSection() ?>
