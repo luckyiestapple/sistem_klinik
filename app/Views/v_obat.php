@@ -57,7 +57,7 @@
                       <td><code><?= esc($o['kode_obat']) ?></code></td>
                       <td><strong><?= esc($o['nama_obat']) ?></strong></td>
                       <td><?= esc($o['kandungan'] ?: '-') ?></td>
-                      <td><span class="badge badge-light-secondary"><?= esc($o['satuan']) ?></span></td>
+                      <td><span class="badge badge-light-secondary text-dark"><?= esc($o['satuan']) ?></span></td>
                       <td>
                         <?php 
                         $stok = (int)$o['stok'];
