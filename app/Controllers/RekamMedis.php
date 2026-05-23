@@ -78,7 +78,7 @@ class RekamMedis extends BaseController
         $idReferansi = session()->get('id_referensi');
 
         // Doctors can only prescribe/examine for themselves
-        if ($level == 4) {
+        if ($level == 3) {
             $dokterList = $dokterModel->where('id_dokter', $idReferansi)->findAll();
         } else {
             $dokterList = $dokterModel->findAll();
@@ -119,6 +119,7 @@ class RekamMedis extends BaseController
                 'pemeriksaan_fisik' => $this->request->getPost('pemeriksaan_fisik'),
                 'tgl_kontrol'       => $this->request->getPost('tgl_kontrol') ?: null,
                 'id_antrean'        => $idAntrean,
+                'resep_obat'        => $this->request->getPost('resep_obat') ?: null,
             ];
 
             $this->model->insert($dataInsert);
@@ -237,6 +238,7 @@ class RekamMedis extends BaseController
             'tinggi_badan'      => $this->request->getPost('tinggi_badan'),
             'pemeriksaan_fisik' => $this->request->getPost('pemeriksaan_fisik'),
             'tgl_kontrol'       => $this->request->getPost('tgl_kontrol') ?: null,
+            'resep_obat'        => $this->request->getPost('resep_obat') ?: null,
         ];
 
         $this->model->update($id, $dataUpdate);

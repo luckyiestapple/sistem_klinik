@@ -45,7 +45,7 @@
                         $selected = '';
                         if (!empty($prefilledAntrean) && $prefilledAntrean['id_pasien'] == $p['id_pasien']) {
                             $selected = 'selected';
-                        } elseif ($this->request->getGet('id_pasien') == $p['id_pasien']) {
+                        } elseif (request()->getGet('id_pasien') == $p['id_pasien']) {
                             $selected = 'selected';
                         }
                         ?>
@@ -65,7 +65,7 @@
                         $selected = '';
                         if (!empty($prefilledAntrean) && $prefilledAntrean['id_dokter'] == $d['id_dokter']) {
                             $selected = 'selected';
-                        } elseif (session()->get('id_level') == 4 && session()->get('id_referensi') == $d['id_dokter']) {
+                        } elseif (session()->get('id_level') == 3 && session()->get('id_referensi') == $d['id_dokter']) {
                             $selected = 'selected';
                         }
                         ?>
@@ -140,8 +140,15 @@
                 <textarea name="hasil_pemeriksaan" class="form-control" rows="4" placeholder="Hasil diagnosa dokter..." required><?= old('hasil_pemeriksaan') ?></textarea>
               </div>
 
-              <!-- Bagian 4: Rencana & Kontrol Kembali -->
-              <h5 class="form-section text-info mt-3"><i class="la la-calendar"></i> 4. Tindak Lanjut</h5>
+              <!-- Bagian 4: Resep Obat -->
+              <h5 class="form-section text-info mt-3"><i class="la la-clipboard"></i> 4. Resep Obat (Opsional)</h5>
+              <div class="form-group">
+                <label>Resep / Aturan Pakai Obat</label>
+                <textarea name="resep_obat" class="form-control" rows="3" placeholder="Contoh: Paracetamol 500mg (3x1 tablet setelah makan), Amoxicillin 500mg (3x1 tablet, habiskan)..."><?= old('resep_obat') ?></textarea>
+              </div>
+
+              <!-- Bagian 5: Rencana & Kontrol Kembali -->
+              <h5 class="form-section text-info mt-3"><i class="la la-calendar"></i> 5. Tindak Lanjut</h5>
               <div class="form-group">
                 <label>Tanggal Kontrol Kembali (Opsional)</label>
                 <input type="date" name="tgl_kontrol" class="form-control" value="<?= old('tgl_kontrol') ?>">

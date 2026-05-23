@@ -24,6 +24,7 @@ class Modelrekmed extends Model
         'pemeriksaan_fisik',
         'tgl_kontrol',
         'id_antrean',
+        'resep_obat',
     ];
 
     /**

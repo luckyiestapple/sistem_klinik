@@ -56,12 +56,8 @@
                     <label>Satuan</label>
                     <select name="satuan" class="form-control">
                       <option value="tablet">Tablet</option>
-                      <option value="kapsul">Kapsul</option>
-                      <option value="ml">Ml</option>
                       <option value="botol">Botol</option>
-                      <option value="box">Box</option>
                       <option value="tube">Tube</option>
-                      <option value="sachet">Sachet</option>
                     </select>
                   </div>
                 </div>
