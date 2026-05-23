@@ -63,7 +63,7 @@
                       <td><?= $no++ ?></td>
                       <td><strong><?= esc($r['nama_pasien']) ?></strong></td>
                       <td><?= esc($r['nama_dokter']) ?></td>
-                      <td><span class="badge badge-light-info">Poli <?= esc($r['spesialisasi']) ?></span></td>
+                      <td><span class="badge badge-light-info text-dark">Poli <?= esc($r['spesialisasi']) ?></span></td>
                       <td><?= date('d/m/Y', strtotime($r['tgl_periksa'])) ?></td>
                       <td class="text-truncate" style="max-width:180px;"><?= esc($r['keluhan']) ?></td>
                       <td class="font-weight-bold text-success"><?= esc($r['diagnosa']) ?></td>

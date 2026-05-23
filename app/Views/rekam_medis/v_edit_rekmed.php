@@ -102,7 +102,7 @@
               <h5 class="form-section text-info mt-3"><i class="la la-paste"></i> 3. Pemeriksaan Klinis</h5>
               <div class="form-group">
                 <label>Keluhan / Gejala Utama <span class="text-danger">*</span></label>
-                <textarea name="keluhan" class="form-control" rows="3" required><?= esc($rekam_medis['keluhan']) ?></textarea>
+                <textarea name="keluhan" class="form-control" rows="3" required readonly><?= esc($rekam_medis['keluhan']) ?></textarea>
               </div>
               <div class="form-group">
                 <label>Catatan Pemeriksaan Fisik</label>

@@ -96,7 +96,7 @@
                   </td>
                   <td><strong><?= esc($a['nama_pasien']) ?></strong><br><small class="text-muted"><?= $a['id_pasien'] ?></small></td>
                   <td><strong><?= esc($a['nama_dokter']) ?></strong></td>
-                  <td class="text-center"><span class="badge badge-light-info">Poli <?= esc($a['spesialisasi']) ?></span></td>
+                  <td class="text-center"><span class="badge badge-light-info text-dark">Poli <?= esc($a['spesialisasi']) ?></span></td>
                   <td class="text-center"><?= date('d/m/Y', strtotime($a['tgl_antrean'])) ?></td>
                   <td><?= esc($a['keluhan'] ?: '-') ?></td>
                   <td class="text-center">

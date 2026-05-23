@@ -123,7 +123,7 @@
               <h5 class="form-section text-info mt-3"><i class="la la-paste"></i> 3. Pemeriksaan Klinis</h5>
               <div class="form-group">
                 <label>Keluhan / Gejala Utama <span class="text-danger">*</span></label>
-                <textarea name="keluhan" class="form-control" rows="3" placeholder="Deskripsikan keluhan pasien..." required><?php 
+                <textarea name="keluhan" class="form-control" rows="3" placeholder="Deskripsikan keluhan pasien..." required readonly><?php 
                   if (!empty($prefilledAntrean)) {
                       echo esc($prefilledAntrean['keluhan'] ?? '');
                   } else {

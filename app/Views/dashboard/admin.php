@@ -206,7 +206,7 @@
                     <td class="text-truncate font-weight-bold text-dark"><?= esc($r['nama_pasien']) ?></td>
                     <td class="text-truncate"><?= esc($r['nama_dokter']) ?></td>
                     <td>
-                      <span class="badge badge-light-info">
+                      <span class="badge badge-light-info text-dark">
                         <?= esc($r['spesialisasi']) ?>
                       </span>
                     </td>
