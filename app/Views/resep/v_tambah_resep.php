@@ -20,13 +20,29 @@
         <div class="card-header bg-info white"><h5 class="mb-0"><i class="la la-stethoscope"></i> Data Rekam Medis</h5></div>
         <div class="card-body">
           <div class="row">
-            <div class="col-md-3"><strong>Pasien:</strong><br><?= esc($rekam_medis['nama_pasien']) ?></div>
+            <div class="col-md-3">
+              <strong>Pasien:</strong><br>
+              <?= esc($rekam_medis['nama_pasien']) ?>
+              <?php if ($is_bpjs): ?>
+                <span class="badge badge-success ml-1"><i class="la la-check-circle"></i> BPJS Aktif</span>
+              <?php else: ?>
+                <span class="badge badge-secondary ml-1">Non-BPJS</span>
+              <?php endif; ?>
+            </div>
             <div class="col-md-3"><strong>Dokter:</strong><br><?= esc($rekam_medis['nama_dokter']) ?></div>
             <div class="col-md-3"><strong>Tgl Periksa:</strong><br><?= date('d/m/Y', strtotime($rekam_medis['tgl_periksa'])) ?></div>
             <div class="col-md-3"><strong>Keluhan:</strong><br><?= esc($rekam_medis['keluhan']) ?></div>
           </div>
         </div>
       </div>
+
+      <?php if ($is_bpjs): ?>
+      <div class="alert alert-success border-0 mb-2" style="background:linear-gradient(90deg,#1e7e34 0%,#28a745 100%);color:#fff;border-radius:8px;">
+        <i class="la la-check-circle" style="font-size:1.3rem;"></i>
+        <strong> Pasien BPJS &mdash; Biaya Obat Ditanggung BPJS.</strong>
+        Subtotal resep ini akan otomatis <strong>Rp 0 (Gratis)</strong> karena seluruh biaya obat ditanggung oleh BPJS.
+      </div>
+      <?php endif; ?>
 
       <!-- Form Resep -->
       <div class="card">
@@ -74,7 +90,13 @@
                   <tfoot>
                     <tr>
                       <td colspan="4" class="text-right font-weight-bold h5">TOTAL KESELURUHAN:</td>
+                      <?php if ($is_bpjs): ?>
+                      <td class="text-right font-weight-bold text-success h5" id="totalHargaText">
+                        <span class="badge badge-success" style="font-size:1rem;">Rp 0 <small>(Ditanggung BPJS)</small></span>
+                      </td>
+                      <?php else: ?>
                       <td class="text-right font-weight-bold text-primary h5" id="totalHargaText">Rp 0</td>
+                      <?php endif; ?>
                       <td></td>
                     </tr>
                   </tfoot>
@@ -102,11 +124,18 @@
 <?= $this->section('script') ?>
 <script>
 $(document).ready(function() {
+    var isBpjs = <?= $is_bpjs ? 'true' : 'false' ?>;
+
     function formatRp(n) {
         return 'Rp ' + parseFloat(n).toLocaleString('id-ID', {minimumFractionDigits: 0});
     }
 
     function hit_subtotal(row) {
+        if (isBpjs) {
+            row.find('.td-subtotal-text').html('<span class="text-success font-weight-bold">Rp 0</span>');
+            hitung_total();
+            return;
+        }
         const jml = parseFloat(row.find('.inp-jumlah').val()) || 0;
         const hrg = parseFloat(row.find('.inp-harga').val()) || 0;
         const sub = jml * hrg;
@@ -115,6 +144,10 @@ $(document).ready(function() {
     }
 
     function hitung_total() {
+        if (isBpjs) {
+            $('#totalHargaText').html('<span class="badge badge-success" style="font-size:1rem;">Rp 0 <small>(Ditanggung BPJS)</small></span>');
+            return;
+        }
         let total = 0;
         $('.row-obat').each(function() {
             const jml = parseFloat($(this).find('.inp-jumlah').val()) || 0;
@@ -146,7 +179,8 @@ $(document).ready(function() {
         newRow.find('select').val('');
         newRow.find('.inp-jumlah').val(1);
         newRow.find('.inp-harga').val(0);
-        newRow.find('.td-subtotal-text').text('Rp 0');
+        newRow.find('.td-subtotal-text').text(isBpjs ? '' : 'Rp 0');
+        if (isBpjs) newRow.find('.td-subtotal-text').html('<span class="text-success font-weight-bold">Rp 0</span>');
         
         $('#bodyObat').append(newRow);
     });
@@ -163,6 +197,9 @@ $(document).ready(function() {
 
     // Inisialisasi awal
     hitung_total();
+    if (isBpjs) {
+        $('.row-obat').each(function() { hit_subtotal($(this)); });
+    }
 });
 </script>
 <?= $this->endSection() ?>

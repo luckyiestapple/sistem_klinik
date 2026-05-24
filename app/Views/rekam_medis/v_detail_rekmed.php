@@ -18,9 +18,11 @@
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
           <h4 class="card-title">Rincian Rekam Medis: #<?= $rekam_medis['id_rekam_medis'] ?></h4>
           <div class="heading-elements">
+            <?php if (session()->get('id_level') == 3): ?>
             <a href="<?= base_url('resep/tambah/'.$rekam_medis['id_rekam_medis']) ?>" class="btn btn-success font-weight-bold">
               <i class="la la-plus-circle"></i> Buat Resep Obat
             </a>
+            <?php endif; ?>
             <a href="<?= base_url('rekam_medis') ?>" class="btn btn-secondary font-weight-bold ml-1">
               <i class="la la-arrow-left"></i> Kembali
             </a>

@@ -35,9 +35,11 @@
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
           <h4 class="card-title">Riwayat Berobat Pasien</h4>
           <div class="heading-elements">
+            <?php if (session()->get('id_level') == 3): ?>
             <a href="<?= base_url('rekam_medis/tambah') ?>" class="btn btn-primary font-weight-bold">
               <i class="la la-plus"></i> Input Rekam Medis
             </a>
+            <?php endif; ?>
           </div>
         </div>
         <div class="card-content">

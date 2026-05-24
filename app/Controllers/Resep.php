@@ -42,7 +42,7 @@ class Resep extends BaseController
         $idReferansi = session()->get('id_referensi');
 
         $query = $this->db->table('tb_resep r')
-            ->select('r.*, p.nama AS nama_pasien, d.nama AS nama_dokter, d.spesialisasi')
+            ->select('r.*, p.nama AS nama_pasien, p.status_bpjs, d.nama AS nama_dokter, d.spesialisasi')
             ->join('tb_pasien p', 'p.id_pasien = r.id_pasien')
             ->join('tb_dokter d', 'd.id_dokter = r.id_dokter');
 
@@ -73,7 +73,7 @@ class Resep extends BaseController
         $obatModel   = new Modelobat();
 
         $rekmed = $this->db->table('tb_rekam_medis rm')
-            ->select('rm.*, p.nama AS nama_pasien, d.nama AS nama_dokter')
+            ->select('rm.*, p.nama AS nama_pasien, p.status_bpjs, p.no_bpjs, d.nama AS nama_dokter')
             ->join('tb_pasien p', 'p.id_pasien = rm.id_pasien')
             ->join('tb_dokter d', 'd.id_dokter = rm.id_dokter')
             ->where('rm.id_rekam_medis', $idRekamMedis)
@@ -97,6 +97,7 @@ class Resep extends BaseController
             'title'       => 'Buat Resep',
             'rekam_medis' => $rekmed,
             'obat'        => $obat,
+            'is_bpjs'     => (strtolower($rekmed['status_bpjs'] ?? '') === 'aktif'),
         ];
         return view('resep/v_tambah_resep', $data);
     }
@@ -121,15 +122,22 @@ class Resep extends BaseController
                 return redirect()->back()->withInput();
             }
 
-            // Hitung total
-            $total = 0;
-            foreach ($jumlahArr as $i => $jml) {
-                $total += (int)$jml * (float)$hargaArr[$i];
-            }
-
             // Ambil data pasien & dokter dari rekmed
             $rekmedModel = new Modelrekmed();
             $rm = $rekmedModel->find($idRekamMedis);
+
+            // Ambil status BPJS pasien
+            $pasienModel = new \App\Models\Modelpasien();
+            $pasien = $pasienModel->find($rm['id_pasien']);
+            $isBpjs = (strtolower($pasien['status_bpjs'] ?? '') === 'aktif');
+
+            // Hitung total (BPJS = gratis Rp0, Non-BPJS = normal)
+            $total = 0;
+            if (!$isBpjs) {
+                foreach ($jumlahArr as $i => $jml) {
+                    $total += (int)$jml * (float)$hargaArr[$i];
+                }
+            }
 
             // Simpan header resep (id_resep auto increment)
             $idResep = $this->model->insert([
@@ -192,7 +200,7 @@ class Resep extends BaseController
         if ($r = $this->authCheck()) return $r;
 
         $resep = $this->db->table('tb_resep r')
-            ->select('r.*, p.nama AS nama_pasien, p.jk, p.tgl_lahir, p.no_telp, d.nama AS nama_dokter, d.spesialisasi')
+            ->select('r.*, p.nama AS nama_pasien, p.jk, p.tgl_lahir, p.no_telp, p.status_bpjs, p.no_bpjs, d.nama AS nama_dokter, d.spesialisasi')
             ->join('tb_pasien p', 'p.id_pasien = r.id_pasien')
             ->join('tb_dokter d', 'd.id_dokter = r.id_dokter')
             ->where('r.id_resep', $id)
@@ -210,11 +218,13 @@ class Resep extends BaseController
         }
 
         $detail = $this->detailModel->getDetailByResep($id);
+        $isBpjs = (strtolower($resep['status_bpjs'] ?? '') === 'aktif');
 
         $data = [
-            'title'  => 'Detail Resep',
-            'resep'  => $resep,
-            'detail' => $detail,
+            'title'   => 'Detail Resep',
+            'resep'   => $resep,
+            'detail'  => $detail,
+            'is_bpjs' => $isBpjs,
         ];
         return view('resep/v_detail_resep', $data);
     }

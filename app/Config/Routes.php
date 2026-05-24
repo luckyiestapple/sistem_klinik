@@ -62,6 +62,16 @@ $routes->group('', ['filter' => 'dokterAuth'], function($routes) {
     $routes->post('/dokter/antrian/selesai/(:any)', 'DashboardDokter::selesaiAntrian/$1');
     $routes->get('/dokter/profil', 'DashboardDokter::profil');
     $routes->post('/dokter/profil/update', 'DashboardDokter::profilUpdate');
+
+    // Rekam Medis (Input/Edit hanya Dokter)
+    $routes->get('/rekam_medis/tambah',       'RekamMedis::tambah');
+    $routes->post('/rekam_medis/simpan',      'RekamMedis::simpan');
+    $routes->get('/rekam_medis/edit/(:any)',   'RekamMedis::edit/$1');
+    $routes->post('/rekam_medis/update/(:any)', 'RekamMedis::update/$1');
+
+    // Resep (Input hanya Dokter)
+    $routes->get('/resep/tambah/(:any)',        'Resep::tambah/$1');
+    $routes->post('/resep/simpan',             'Resep::simpan');
 });
 
 // ── Pasien-only Routes (Level 2) ──────────────────────────
@@ -77,21 +87,15 @@ $routes->group('', ['filter' => 'pasienAuth'], function($routes) {
     $routes->get('/rekam_medis_pasien', 'DashboardPasien::rekamMedis');
 });
 
-// ── Shared (Admin & Dokter - Level 1 & 4) ──────────────────
+// ── Shared (Admin & Dokter - Level 1 & 3) ──────────────────
 $routes->group('', ['filter' => 'adminOrDokterAuth'], function($routes) {
-    // Rekam Medis
+    // Rekam Medis (Lihat & Hapus untuk Admin+Dokter)
     $routes->get('/rekam_medis',              'RekamMedis::index');
-    $routes->get('/rekam_medis/tambah',       'RekamMedis::tambah');
-    $routes->post('/rekam_medis/simpan',      'RekamMedis::simpan');
     $routes->get('/rekam_medis/detail/(:any)', 'RekamMedis::detail/$1');
-    $routes->get('/rekam_medis/edit/(:any)',   'RekamMedis::edit/$1');
-    $routes->post('/rekam_medis/update/(:any)', 'RekamMedis::update/$1');
     $routes->get('/rekam_medis/hapus/(:any)', 'RekamMedis::hapus/$1');
 
-    // Resep
+    // Resep (Lihat & Proses untuk Admin+Dokter)
     $routes->get('/resep',                     'Resep::index');
-    $routes->get('/resep/tambah/(:any)',        'Resep::tambah/$1');
-    $routes->post('/resep/simpan',             'Resep::simpan');
     $routes->get('/resep/detail/(:any)',        'Resep::detail/$1');
     $routes->post('/resep/update_status/(:any)', 'Resep::updateStatus/$1');
 });

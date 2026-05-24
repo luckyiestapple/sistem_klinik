@@ -64,6 +64,12 @@ class RekamMedis extends BaseController
     {
         if ($r = $this->authCheck()) return $r;
 
+        // Hanya Dokter yang boleh input rekam medis
+        if (session()->get('id_level') != 3) {
+            session()->setFlashdata('error', 'Akses ditolak. Hanya Dokter yang dapat menginput rekam medis.');
+            return redirect()->to(base_url('rekam_medis'));
+        }
+
         $pasienModel = new Modelpasien();
         $dokterModel = new Modeldokter();
         $antreanModel = new Modelantrean();
@@ -119,10 +125,10 @@ class RekamMedis extends BaseController
                 'pemeriksaan_fisik' => $this->request->getPost('pemeriksaan_fisik'),
                 'tgl_kontrol'       => $this->request->getPost('tgl_kontrol') ?: null,
                 'id_antrean'        => $idAntrean,
-                'resep_obat'        => $this->request->getPost('resep_obat') ?: null,
             ];
 
             $this->model->insert($dataInsert);
+            $idRekamMedis = $this->model->getInsertID();
 
             // Update queue status to completed if exists
             if (!empty($idAntrean)) {
@@ -136,11 +142,11 @@ class RekamMedis extends BaseController
                 return redirect()->back()->withInput();
             } else {
                 $db->transCommit();
-                session()->setFlashdata('success', 'Rekam medis berhasil disimpan.');
+                session()->setFlashdata('success', 'Rekam medis berhasil disimpan. Silakan buat resep obat.');
                 
-                // If Doctor, redirect back to Dashboard Dokter, else to list Rekam Medis
+                // Redirect Dokter ke halaman buat resep setelah simpan RM
                 if (session()->get('id_level') == 3) {
-                    return redirect()->to(base_url('dashboard_dokter'));
+                    return redirect()->to(base_url('resep/tambah/' . $idRekamMedis));
                 }
                 return redirect()->to(base_url('rekam_medis'));
             }
@@ -183,6 +189,12 @@ class RekamMedis extends BaseController
     public function edit($id)
     {
         if ($r = $this->authCheck()) return $r;
+
+        // Hanya Dokter yang boleh edit rekam medis
+        if (session()->get('id_level') != 3) {
+            session()->setFlashdata('error', 'Akses ditolak. Hanya Dokter yang dapat mengedit rekam medis.');
+            return redirect()->to(base_url('rekam_medis'));
+        }
 
         $rekmed = $this->model->find($id);
         if (!$rekmed) {
@@ -238,7 +250,6 @@ class RekamMedis extends BaseController
             'tinggi_badan'      => $this->request->getPost('tinggi_badan'),
             'pemeriksaan_fisik' => $this->request->getPost('pemeriksaan_fisik'),
             'tgl_kontrol'       => $this->request->getPost('tgl_kontrol') ?: null,
-            'resep_obat'        => $this->request->getPost('resep_obat') ?: null,
         ];
 
         $this->model->update($id, $dataUpdate);

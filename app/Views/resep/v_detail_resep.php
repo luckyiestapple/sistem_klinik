@@ -51,7 +51,13 @@
                 <table class="table table-sm table-borderless">
                   <tr>
                     <th width="140">Nama Pasien</th>
-                    <td>: <strong><?= esc($resep['nama_pasien']) ?></strong></td>
+                    <td>: <strong><?= esc($resep['nama_pasien']) ?></strong>
+                      <?php if ($is_bpjs): ?>
+                        <span class="badge badge-success ml-1"><i class="la la-check-circle"></i> BPJS Aktif</span>
+                      <?php else: ?>
+                        <span class="badge badge-secondary ml-1">Non-BPJS</span>
+                      <?php endif; ?>
+                    </td>
                   </tr>
                   <tr>
                     <th>Gender / Umur</th>
@@ -73,6 +79,12 @@
                     <th>No. Telepon</th>
                     <td>: <?= esc($resep['no_telp'] ?? '-') ?></td>
                   </tr>
+                  <?php if ($is_bpjs && !empty($resep['no_bpjs'])): ?>
+                  <tr>
+                    <th>No. BPJS</th>
+                    <td>: <span class="text-success font-weight-bold"><?= esc($resep['no_bpjs']) ?></span></td>
+                  </tr>
+                  <?php endif; ?>
                 </table>
               </div>
               <div class="col-md-6 col-12">
@@ -128,6 +140,15 @@
               </div>
             <?php endif; ?>
 
+            <!-- BPJS Notice Banner -->
+            <?php if ($is_bpjs): ?>
+            <div class="alert border-0 mb-3" style="background:linear-gradient(90deg,#1e7e34 0%,#28a745 100%);color:#fff;border-radius:8px;">
+              <i class="la la-check-circle" style="font-size:1.3rem;"></i>
+              <strong> Pasien BPJS &mdash; Biaya Ditanggung BPJS.</strong>
+              Seluruh biaya obat untuk pasien ini <strong>ditanggung oleh BPJS</strong>, sehingga total tagihan adalah <strong>Rp 0 (Gratis)</strong>.
+            </div>
+            <?php endif; ?>
+
             <!-- Tabel Detail Obat -->
             <h5 class="text-info border-bottom pb-1 mb-2"><i class="la la-medkit"></i> Rincian Obat</h5>
             <div class="table-responsive">
@@ -150,14 +171,28 @@
                     <td><?= esc($d['dosis'] ?? '-') ?></td>
                     <td class="text-center"><?= $d['jumlah'] ?></td>
                     <td class="text-right">Rp <?= number_format($d['harga'], 0, ',', '.') ?></td>
-                    <td class="text-right font-weight-bold">Rp <?= number_format($d['subtotal'], 0, ',', '.') ?></td>
+                    <td class="text-right font-weight-bold">
+                      <?php if ($is_bpjs): ?>
+                        <span class="text-success">Rp 0</span>
+                      <?php else: ?>
+                        Rp <?= number_format($d['subtotal'], 0, ',', '.') ?>
+                      <?php endif; ?>
+                    </td>
                   </tr>
                   <?php endforeach; ?>
                 </tbody>
                 <tfoot>
                   <tr>
                     <td colspan="5" class="text-right font-weight-bold h5">Total Biaya Resep:</td>
+                    <?php if ($is_bpjs): ?>
+                    <td class="text-right h4">
+                      <span class="badge badge-success" style="font-size:1.1rem;padding:.5rem .9rem;">
+                        <i class="la la-check-circle"></i> Rp 0 &mdash; Gratis (BPJS)
+                      </span>
+                    </td>
+                    <?php else: ?>
                     <td class="text-right font-weight-bold text-success h4">Rp <?= number_format($resep['total_harga'], 0, ',', '.') ?></td>
+                    <?php endif; ?>
                   </tr>
                 </tfoot>
               </table>

@@ -35,9 +35,11 @@
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
           <h4 class="card-title">Manajemen Resep & Pengeluaran Obat</h4>
           <div class="heading-elements">
+            <?php if (session()->get('id_level') == 3): ?>
             <a href="<?= base_url('rekam_medis') ?>" class="btn btn-primary btn-sm font-weight-bold">
               <i class="la la-stethoscope"></i> Input Resep Baru (Dari Rekam Medis)
             </a>
+            <?php endif; ?>
           </div>
         </div>
         <div class="card-content">
@@ -62,10 +64,21 @@
                     <tr>
                       <td><?= $no++ ?></td>
                       <td><strong>RSP-<?= str_pad($r['id_resep'], 4, '0', STR_PAD_LEFT) ?></strong></td>
-                      <td><?= esc($r['nama_pasien']) ?></td>
+                      <td>
+                        <?= esc($r['nama_pasien']) ?>
+                        <?php if (strtolower($r['status_bpjs'] ?? '') === 'aktif'): ?>
+                          <span class="badge badge-success" style="font-size:.7rem;">BPJS</span>
+                        <?php endif; ?>
+                      </td>
                       <td><?= esc($r['nama_dokter']) ?></td>
                       <td><?= date('d/m/Y', strtotime($r['tgl_resep'])) ?></td>
-                      <td>Rp <?= number_format($r['total_harga'], 0, ',', '.') ?></td>
+                      <td>
+                        <?php if (strtolower($r['status_bpjs'] ?? '') === 'aktif'): ?>
+                          <span class="badge badge-success">Rp 0 &mdash; Gratis (BPJS)</span>
+                        <?php else: ?>
+                          Rp <?= number_format($r['total_harga'], 0, ',', '.') ?>
+                        <?php endif; ?>
+                      </td>
                       <td>
                         <?php 
                         $status = $r['status'] ?? 'menunggu';

@@ -113,15 +113,8 @@
                 <textarea name="hasil_pemeriksaan" class="form-control" rows="4" required><?= esc($rekam_medis['diagnosa']) ?></textarea>
               </div>
 
-              <!-- Bagian 4: Resep Obat -->
-              <h5 class="form-section text-info mt-3"><i class="la la-clipboard"></i> 4. Resep Obat (Opsional)</h5>
-              <div class="form-group">
-                <label>Resep / Aturan Pakai Obat</label>
-                <textarea name="resep_obat" class="form-control" rows="3" placeholder="Contoh: Paracetamol 500mg (3x1 tablet setelah makan), Amoxicillin 500mg (3x1 tablet, habiskan)..."><?= esc($rekam_medis['resep_obat'] ?? '') ?></textarea>
-              </div>
-
-              <!-- Bagian 5: Rencana & Kontrol Kembali -->
-              <h5 class="form-section text-info mt-3"><i class="la la-calendar"></i> 5. Tindak Lanjut</h5>
+              <!-- Bagian 4: Rencana & Kontrol Kembali -->
+              <h5 class="form-section text-info mt-3"><i class="la la-calendar"></i> 4. Tindak Lanjut</h5>
               <div class="form-group">
                 <label>Tanggal Kontrol Kembali (Opsional)</label>
                 <input type="date" name="tgl_kontrol" class="form-control" value="<?= $rekam_medis['tgl_kontrol'] ?? '' ?>">
