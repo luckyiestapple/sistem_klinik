@@ -211,12 +211,100 @@ class DashboardPasien extends BaseController
         $userModel = new UserModel();
         $user = $userModel->where('id_referensi', $id_pasien)->where('id_level', 2)->first();
 
+        // Calculate limits for profile picture
+        $can_update_foto = true;
+        $days_remaining = 0;
+        if (!empty($pasien['foto_updated_at'])) {
+            $last_update = strtotime($pasien['foto_updated_at']);
+            $now = time();
+            $seconds_in_30_days = 30 * 24 * 60 * 60;
+            $time_passed = $now - $last_update;
+            if ($time_passed < $seconds_in_30_days) {
+                $can_update_foto = false;
+                $days_remaining = ceil(($seconds_in_30_days - $time_passed) / (24 * 60 * 60));
+            }
+        }
+
         $data = [
-            'title'  => 'Profil Saya',
-            'pasien' => $pasien,
-            'user'   => $user,
+            'title'            => 'Profil Saya',
+            'pasien'           => $pasien,
+            'user'             => $user,
+            'can_update_foto'  => $can_update_foto,
+            'days_remaining'   => $days_remaining
         ];
         return view('dashboard/profil', $data);
+    }
+
+    public function updateFoto()
+    {
+        if (!$this->checkAuth()) {
+            return redirect()->to(base_url('login'))->with('error', 'Akses ditolak.');
+        }
+
+        $id_pasien = session()->get('id_referensi');
+        $pasienModel = new Modelpasien();
+        $pasien = $pasienModel->find($id_pasien);
+
+        if (!$pasien) {
+            return redirect()->to(base_url('profil_pasien'))->with('error', 'Pasien tidak ditemukan.');
+        }
+
+        // Check constraint (30 days limit)
+        if (!empty($pasien['foto_updated_at'])) {
+            $last_update = strtotime($pasien['foto_updated_at']);
+            $now = time();
+            $seconds_in_30_days = 30 * 24 * 60 * 60;
+            $time_passed = $now - $last_update;
+            if ($time_passed < $seconds_in_30_days) {
+                $days_remaining = ceil(($seconds_in_30_days - $time_passed) / (24 * 60 * 60));
+                return redirect()->to(base_url('profil_pasien'))->with('error', 'Foto profil hanya dapat diubah sekali dalam 30 hari. Sisa waktu: ' . $days_remaining . ' hari.');
+            }
+        }
+
+        // Validate upload
+        $validationRules = [
+            'foto' => [
+                'rules' => 'uploaded[foto]|max_size[foto,2048]|is_image[foto]|mime_in[foto,image/png,image/jpg,image/jpeg,image/gif]',
+                'errors' => [
+                    'uploaded' => 'Harap pilih file foto terlebih dahulu.',
+                    'max_size' => 'Ukuran foto maksimal adalah 2MB.',
+                    'is_image' => 'File harus berupa gambar.',
+                    'mime_in'  => 'Format gambar harus berupa PNG, JPG, JPEG, atau GIF.'
+                ]
+            ]
+        ];
+
+        if (!$this->validate($validationRules)) {
+            return redirect()->to(base_url('profil_pasien'))->with('error', $this->validator->getError('foto'));
+        }
+
+        $file = $this->request->getFile('foto');
+        if ($file->isValid() && !$file->hasMoved()) {
+            $newName = $file->getRandomName();
+            $uploadPath = ROOTPATH . 'public/uploads/profile/';
+            
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            // Remove old photo if exists
+            if (!empty($pasien['foto'])) {
+                $oldFilePath = $uploadPath . $pasien['foto'];
+                if (file_exists($oldFilePath)) {
+                    @unlink($oldFilePath);
+                }
+            }
+
+            if ($file->move($uploadPath, $newName)) {
+                $pasienModel->update($id_pasien, [
+                    'foto'            => $newName,
+                    'foto_updated_at' => date('Y-m-d H:i:s')
+                ]);
+                return redirect()->to(base_url('profil_pasien'))->with('success', 'Foto profil berhasil diperbarui.');
+            }
+        }
+
+        return redirect()->to(base_url('profil_pasien'))->with('error', 'Gagal mengunggah foto.');
     }
 
     public function updateInfo()

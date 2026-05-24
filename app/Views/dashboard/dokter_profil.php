@@ -29,94 +29,139 @@
   </div>
   <?php endif; ?>
 
-  <div class="row">
+  <?php 
+  // Determine profile image URL
+  if (!empty($dokter['foto'])) {
+      $avatarUrl = base_url('uploads/profile/' . $dokter['foto']);
+  } else {
+      $avatarUrl = 'https://api.dicebear.com/7.x/adventurer/svg?seed=' . urlencode($dokter['nama'] ?? 'Dokter');
+  }
+  ?>
+
+  <div class="row justify-content-center">
     <div class="col-md-8 col-12">
-      <!-- Card Edit Profil -->
-      <div class="card">
-        <div class="card-header"><h4 class="card-title text-bold-600">Update Profil Dokter</h4></div>
-        <div class="card-content">
-          <div class="card-body">
-            <form action="<?= base_url('dokter/profil/update') ?>" method="POST">
-              <?= csrf_field() ?>
-              
-              <h5 class="form-section text-info"><i class="la la-user"></i> Data Pribadi & STR</h5>
-              <div class="row">
-                <div class="col-md-6 col-12 form-group">
-                  <label>Nama Lengkap <span class="text-danger">*</span></label>
-                  <input type="text" name="nama" class="form-control" value="<?= esc($dokter['nama']) ?>" required>
-                </div>
-                <div class="col-md-6 col-12 form-group">
-                  <label>Poli Spesialisasi (Hanya dibaca)</label>
-                  <input type="text" class="form-control" value="Poli <?= esc($dokter['spesialisasi']) ?>" readonly>
-                </div>
-                <div class="col-md-6 col-12 form-group">
-                  <label>No. SIP / STR (Nomor Surat Izin)</label>
-                  <input type="text" name="sip_str" class="form-control" value="<?= esc($dokter['sip_str'] ?? '') ?>">
-                </div>
-                <div class="col-md-6 col-12 form-group">
-                  <label>No. Telepon / HP <span class="text-danger">*</span></label>
-                  <input type="text" name="no_telp" class="form-control" value="<?= esc($dokter['no_telp'] ?? '') ?>" required>
-                </div>
-                <div class="col-12 form-group">
-                  <label>Email Korespodensi</label>
-                  <input type="email" name="email" class="form-control" value="<?= esc($dokter['email'] ?? '') ?>">
-                </div>
-                <div class="col-12 form-group">
-                  <label>Alamat Lengkap Tempat Tinggal</label>
-                  <textarea name="alamat" class="form-control" rows="2"><?= esc($dokter['alamat'] ?? '') ?></textarea>
-                </div>
+      
+      <!-- 1. Header Banner (Biru) -->
+      <div class="card text-white mb-3" style="background: linear-gradient(135deg, #0099ff, #0066cc); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+          <div class="card-body py-3 px-3">
+              <div class="row align-items-center">
+                  <div class="col-md-auto col-12 text-center text-md-left mb-2 mb-md-0">
+                      <img src="<?= $avatarUrl ?>" class="bg-white rounded-circle" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; aspect-ratio: 1/1;">
+                  </div>
+                  <div class="col-md col-12 text-center text-md-left">
+                      <!-- Capitalize doctor name as shown in the mockup -->
+                      <h3 class="text-white text-bold-700 mb-1" style="font-size: 1.8rem;"><?= strtoupper(esc($dokter['nama'])) ?></h3>
+                      <h5 class="text-white opacity-90 mb-0"><?= esc($dokter['sip_str']) ?></h5>
+                      
+                      <?php if (!$can_update_foto): ?>
+                          <div class="mt-2">
+                              <span class="badge badge-success text-white font-small-3 py-2 px-3" style="border-radius: 6px; white-space: normal; text-align: left; background-color: #28a745; border: none; font-weight: 600;">
+                                  <i class="la la-lock font-medium-1 align-middle mr-1"></i>
+                                  Foto Profil Terkunci (Hanya 1 kali pengisian)
+                              </span>
+                          </div>
+                      <?php else: ?>
+                          <div class="mt-2">
+                              <form action="<?= base_url('dokter/profil/update_foto') ?>" method="POST" enctype="multipart/form-data">
+                                  <?= csrf_field() ?>
+                                  <div class="d-flex align-items-center flex-wrap justify-content-center justify-content-md-start">
+                                      <div class="custom-file mr-md-2 mb-2 mb-md-0" style="width: 250px; max-width: 100%;">
+                                          <input type="file" name="foto" class="custom-file-input" id="uploadFotoInput" required onchange="document.getElementById('upload-label').innerText = this.files[0].name">
+                                          <label class="custom-file-label text-left text-muted" for="uploadFotoInput" id="upload-label" style="font-size: 0.85rem;">Pilih foto...</label>
+                                      </div>
+                                      <button type="submit" class="btn btn-warning btn-sm font-weight-bold py-1 px-3 text-dark" style="background-color: #ffc107; border: none; border-radius: 6px;">
+                                          <i class="la la-upload"></i> Unggah Foto
+                                      </button>
+                                  </div>
+                              </form>
+                          </div>
+                      <?php endif; ?>
+                  </div>
               </div>
-
-              <h5 class="form-section text-info mt-3"><i class="la la-clock-o"></i> Jadwal Praktik Mandiri</h5>
-              <div class="row">
-                <div class="col-md-6 col-12 form-group">
-                  <label>Hari Praktik</label>
-                  <input type="text" name="hari_praktek" class="form-control" placeholder="Contoh: Senin - Jumat" value="<?= esc($dokter['hari_praktek'] ?? '') ?>">
-                </div>
-                <div class="col-md-6 col-12 form-group">
-                  <label>Jam Praktik</label>
-                  <input type="text" name="jam_praktek" class="form-control" placeholder="Contoh: 08:00 - 15:00" value="<?= esc($dokter['jam_praktek'] ?? '') ?>">
-                </div>
-              </div>
-
-              <h5 class="form-section text-info mt-3"><i class="la la-key"></i> Keamanan & Ganti Password</h5>
-              <div class="row">
-                <div class="col-md-6 col-12 form-group">
-                  <label>Username Login (Hanya dibaca)</label>
-                  <input type="text" class="form-control" value="<?= esc($user['username'] ?? '') ?>" readonly>
-                </div>
-                <div class="col-md-6 col-12 form-group">
-                  <label>Password Baru (Kosongkan jika tidak diganti)</label>
-                  <input type="password" name="password" class="form-control" placeholder="Password minimal 6 karakter">
-                </div>
-              </div>
-
-              <div class="form-group mt-3 border-top pt-3">
-                <button type="submit" class="btn btn-warning text-white font-weight-bold">
-                  <i class="la la-save"></i> Perbarui Profil & Password
-                </button>
-              </div>
-            </form>
           </div>
-        </div>
       </div>
-    </div>
-    
-    <!-- Profil Card Info -->
-    <div class="col-md-4 col-12">
-      <div class="card bg-info text-white text-center p-3 box-shadow-2">
-        <div class="card-body">
-          <div class="avatar avatar-xl mb-2">
-            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=<?= urlencode($dokter['nama']) ?>" class="rounded-circle bg-white img-thumbnail" style="width: 100px; height: 100px;">
+
+      <!-- 2. Card DATA PROFIL DOKTER -->
+      <div class="card mb-3 box-shadow-1">
+          <div class="card-header border-bottom py-2">
+              <h4 class="card-title text-bold-600 mb-0">DATA PROFIL DOKTER</h4>
           </div>
-          <h4 class="text-white text-bold-600 mt-2"><?= esc($dokter['nama']) ?></h4>
-          <p class="text-white opacity-8">Spesialisasi Poli: <strong><?= esc($dokter['spesialisasi']) ?></strong></p>
-          <div class="mt-3 p-2 bg-light text-dark rounded text-left font-small-3">
-            <strong>ID Dokter:</strong> <?= esc($dokter['id_dokter']) ?><br>
-            <strong>Jadwal:</strong> <?= esc($dokter['hari_praktek'] ?: 'Belum diisi') ?> (<?= esc($dokter['jam_praktek'] ?: '-') ?>)
+          <div class="card-content">
+              <div class="card-body">
+                  <form action="<?= base_url('dokter/profil/update') ?>" method="POST">
+                      <?= csrf_field() ?>
+                      
+                      <!-- Hidden inputs to preserve other fields required by DashboardDokter::profilUpdate -->
+                      <input type="hidden" name="nama" value="<?= esc($dokter['nama']) ?>">
+                      <input type="hidden" name="alamat" value="<?= esc($dokter['alamat']) ?>">
+                      <input type="hidden" name="no_telp" value="<?= esc($dokter['no_telp']) ?>">
+                      <input type="hidden" name="email" value="<?= esc($dokter['email'] ?? '') ?>">
+                      <input type="hidden" name="sip_str" value="<?= esc($dokter['sip_str'] ?? '') ?>">
+                      <input type="hidden" name="hari_praktek" value="<?= esc($dokter['hari_praktek'] ?? '') ?>">
+                      <input type="hidden" name="jam_praktek" value="<?= esc($dokter['jam_praktek'] ?? '') ?>">
+
+                      <!-- Nama -->
+                      <div class="form-group row align-items-center">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Nama <i class="la la-lock text-muted ml-1"></i></label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="Dokter <?= esc(preg_replace('/^dr\.\s+/i', '', $dokter['nama'])) ?>" readonly>
+                          </div>
+                      </div>
+
+                      <!-- Spesialisasi -->
+                      <div class="form-group row align-items-center">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Spesialisasi <i class="la la-lock text-muted ml-1"></i></label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="<?= esc($dokter['spesialisasi']) ?>" readonly>
+                          </div>
+                      </div>
+
+                      <!-- No. Telp -->
+                      <div class="form-group row align-items-center">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">No. Telp <i class="la la-lock text-muted ml-1"></i></label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="<?= esc($dokter['no_telp'] ?? '-') ?>" readonly>
+                          </div>
+                      </div>
+
+                      <!-- Username -->
+                      <div class="form-group row align-items-center mb-3">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Username <i class="la la-lock text-muted ml-1"></i></label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="dokter <?= esc($user['username'] ?? '') ?>" readonly>
+                          </div>
+                      </div>
+
+                      <!-- Ganti Password Trigger & Collapse Form -->
+                      <div class="form-group mb-0">
+                          <button class="btn text-white btn-block font-weight-bold font-medium-1 py-1 mb-2" type="button" data-toggle="collapse" data-target="#collapsePassword" aria-expanded="false" aria-controls="collapsePassword" style="background-color: #2b6cb0; border: none; border-radius: 6px;">
+                              Ganti Password
+                          </button>
+
+                          <div class="collapse" id="collapsePassword">
+                              <div class="card card-body border box-shadow-0 p-2 mb-0">
+                                  <div class="form-group row align-items-center mb-3">
+                                      <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Password Baru</label>
+                                      <div class="col-sm-8 col-12">
+                                          <input type="password" name="password" class="form-control" placeholder="Password minimal 6 karakter" required>
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="offset-sm-4 col-sm-8 col-12">
+                                          <button type="submit" class="btn btn-success btn-block font-weight-bold font-medium-1 py-1" style="border-radius: 6px;">
+                                              Simpan Perubahan
+                                          </button>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                  </form>
+              </div>
           </div>
-        </div>
       </div>
+
     </div>
   </div>
 </div>

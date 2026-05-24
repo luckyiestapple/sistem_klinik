@@ -26,6 +26,8 @@ class Modelpasien extends Model
         'riwayat_penyakit',
         'kontak_darurat_nama',
         'kontak_darurat_telp',
+        'foto',
+        'foto_updated_at',
     ];
     protected $useTimestamps = false; // Not in SQL dump
 

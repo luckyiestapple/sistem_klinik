@@ -21,6 +21,8 @@ class Modeldokter extends Model
         'status_aktif',
         'hari_praktek',
         'jam_praktek',
+        'foto',
+        'foto_updated_at',
     ];
 
     /**

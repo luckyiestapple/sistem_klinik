@@ -146,12 +146,70 @@ class DashboardDokter extends BaseController
         $userModel = new UserModel();
         $user = $userModel->where('id_referensi', $idDokter)->where('id_level', 3)->first();
 
+        // Doctors can only upload once
+        $can_update_foto = empty($dokter['foto']);
+
         $data = [
-            'title'  => 'Profil Saya',
-            'dokter' => $dokter,
-            'user'   => $user,
+            'title'            => 'Profil Saya',
+            'dokter'           => $dokter,
+            'user'             => $user,
+            'can_update_foto'  => $can_update_foto,
         ];
         return view('dashboard/dokter_profil', $data);
+    }
+
+    public function updateFoto()
+    {
+        if ($r = $this->authCheck()) return $r;
+
+        $idDokter = session()->get('id_referensi');
+        $dokter = $this->dokterModel->find($idDokter);
+
+        if (!$dokter) {
+            return redirect()->to(base_url('dokter/profil'))->with('error', 'Dokter tidak ditemukan.');
+        }
+
+        // Constraint check (can only upload once)
+        if (!empty($dokter['foto'])) {
+            return redirect()->to(base_url('dokter/profil'))->with('error', 'Foto profil sudah diunggah dan tidak dapat diubah lagi.');
+        }
+
+        // Validate upload
+        $validationRules = [
+            'foto' => [
+                'rules' => 'uploaded[foto]|max_size[foto,2048]|is_image[foto]|mime_in[foto,image/png,image/jpg,image/jpeg,image/gif]',
+                'errors' => [
+                    'uploaded' => 'Harap pilih file foto terlebih dahulu.',
+                    'max_size' => 'Ukuran foto maksimal adalah 2MB.',
+                    'is_image' => 'File harus berupa gambar.',
+                    'mime_in'  => 'Format gambar harus berupa PNG, JPG, JPEG, atau GIF.'
+                ]
+            ]
+        ];
+
+        if (!$this->validate($validationRules)) {
+            return redirect()->to(base_url('dokter/profil'))->with('error', $this->validator->getError('foto'));
+        }
+
+        $file = $this->request->getFile('foto');
+        if ($file->isValid() && !$file->hasMoved()) {
+            $newName = $file->getRandomName();
+            $uploadPath = ROOTPATH . 'public/uploads/profile/';
+            
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            if ($file->move($uploadPath, $newName)) {
+                $this->dokterModel->update($idDokter, [
+                    'foto'            => $newName,
+                    'foto_updated_at' => date('Y-m-d H:i:s')
+                ]);
+                return redirect()->to(base_url('dokter/profil'))->with('success', 'Foto profil berhasil diunggah.');
+            }
+        }
+
+        return redirect()->to(base_url('dokter/profil'))->with('error', 'Gagal mengunggah foto.');
     }
 
     public function profilUpdate()

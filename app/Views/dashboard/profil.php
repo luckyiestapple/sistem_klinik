@@ -29,101 +29,234 @@
   </div>
   <?php endif; ?>
 
-  <!-- Row untuk Profil Card Info (Atas, Terpusat) -->
-  <div class="row justify-content-center mb-3">
-    <div class="col-md-6 col-12">
-      <div class="card bg-info text-white text-center p-3 box-shadow-2">
-        <div class="card-content">
-          <div class="card-body">
-            <div class="avatar avatar-xl mb-2">
-              <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=<?= urlencode($pasien['nama'] ?? 'Pasien') ?>" class="rounded-circle bg-white img-thumbnail" style="width: 100px; height: 100px;">
-            </div>
-            <h4 class="text-white text-bold-600 mt-2"><?= esc($pasien['nama'] ?? '') ?></h4>
-            <span class="badge badge-pill badge-warning px-3 py-1 mt-1">ID Pasien: <?= esc($pasien['id_pasien'] ?? '') ?></span>
-            
-            <!-- Box info abu-abu di bagian bawah card biru (hanya menampilkan data statis) -->
-            <div class="mt-4 p-3 bg-light text-dark rounded text-center font-medium-1" style="opacity: 0.95;">
-              <strong>Tanggal Lahir:</strong> <?= esc($pasien['tgl_lahir'] ?? '-') ?>
-            </div>
+  <?php 
+  // Determine profile image URL
+  if (!empty($pasien['foto'])) {
+      $avatarUrl = base_url('uploads/profile/' . $pasien['foto']);
+  } else {
+      $avatarUrl = 'https://api.dicebear.com/7.x/adventurer/svg?seed=' . urlencode($pasien['nama'] ?? 'Pasien');
+  }
+  ?>
+
+  <!-- 1. Header Banner (Biru) -->
+  <div class="card text-white mb-3" style="background: linear-gradient(135deg, #0099ff, #0066cc); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+      <div class="card-body py-3 px-3">
+          <div class="row align-items-center">
+              <div class="col-md-auto col-12 text-center text-md-left mb-2 mb-md-0">
+                  <img src="<?= $avatarUrl ?>" class="bg-white" style="width: 100px; height: 100px; border-radius: 12px; object-fit: cover; border: 3px solid #fff; aspect-ratio: 1/1;">
+              </div>
+              <div class="col-md col-12 text-center text-md-left">
+                  <h3 class="text-white text-bold-700 mb-1" style="font-size: 1.8rem;"><?= esc($pasien['nama']) ?></h3>
+                  <h5 class="text-white opacity-90 mb-0">ID Pasien: <?= esc($pasien['id_pasien']) ?></h5>
+                  
+                  <?php if (!$can_update_foto): ?>
+                      <div class="mt-2">
+                          <span class="badge badge-warning text-dark font-small-3 py-2 px-3" style="border-radius: 6px; white-space: normal; text-align: left; background-color: #ffd800; border: none;">
+                              <i class="la la-info-circle font-medium-1 align-middle mr-1"></i>
+                              Foto dapat diubah kembali dalam <strong><?= $days_remaining ?></strong> hari (Terakhir diperbarui: <?= date('Y-m-d', strtotime($pasien['foto_updated_at'])) ?>)
+                          </span>
+                      </div>
+                  <?php else: ?>
+                      <div class="mt-2">
+                          <form action="<?= base_url('profil_pasien/update_foto') ?>" method="POST" enctype="multipart/form-data">
+                              <?= csrf_field() ?>
+                              <div class="d-flex align-items-center flex-wrap justify-content-center justify-content-md-start">
+                                  <div class="custom-file mr-md-2 mb-2 mb-md-0" style="width: 250px; max-width: 100%;">
+                                      <input type="file" name="foto" class="custom-file-input" id="uploadFotoInput" required onchange="document.getElementById('upload-label').innerText = this.files[0].name">
+                                      <label class="custom-file-label text-left text-muted" for="uploadFotoInput" id="upload-label" style="font-size: 0.85rem;">Pilih foto...</label>
+                                  </div>
+                                  <button type="submit" class="btn btn-warning btn-sm font-weight-bold py-1 px-3 text-dark" style="background-color: #ffc107; border: none; border-radius: 6px;">
+                                      <i class="la la-upload"></i> Unggah Foto
+                                  </button>
+                              </div>
+                          </form>
+                      </div>
+                  <?php endif; ?>
+              </div>
           </div>
-        </div>
       </div>
-    </div>
   </div>
 
-  <!-- Row untuk Form input dan Ganti Password -->
+  <!-- 2. Grid Layout untuk Data & Form Edit -->
   <div class="row">
-    <!-- Card Ubah Kontak & BPJS (Kiri) -->
-    <div class="col-md-6 col-12 mb-3">
-      <div class="card h-100">
-        <div class="card-header">
-          <h4 class="card-title text-bold-600"><i class="ft-edit-2 mr-1"></i> Ubah Nomor Telepon</h4>
-        </div>
-        <div class="card-content">
-          <div class="card-body">
-            <form action="<?= base_url('profil_pasien/update_info') ?>" method="POST">
-              <?= csrf_field() ?>
-              
-              <div class="form-group">
-                <label>Nomor Telepon <span class="text-danger">*</span></label>
-                <input type="text" name="no_telp" class="form-control" value="<?= esc($pasien['no_telp'] ?? '') ?>" required>
-                <small class="form-text text-muted">Gunakan nomor telepon aktif Anda.</small>
+      <!-- Kolom Kiri -->
+      <div class="col-md-6 col-12">
+          <!-- Card BIODATA & KONTAK -->
+          <div class="card mb-3 box-shadow-1">
+              <div class="card-header border-bottom py-2 d-flex justify-content-between align-items-center">
+                  <h4 class="card-title text-bold-600 mb-0">BIODATA & KONTAK</h4>
+                  <i class="la la-lock text-muted font-medium-2"></i>
               </div>
-
-              <div class="form-group">
-                <label>Nomor BPJS / JKN (Terkunci)</label>
-                <input type="text" class="form-control" value="<?= esc($pasien['no_bpjs'] ?: 'Tidak Ada BPJS') ?>" readonly>
-                <small class="form-text text-muted">Nomor BPJS/JKN terdaftar tidak dapat diubah.</small>
+              <div class="card-content">
+                  <div class="card-body">
+                      <!-- Nama Lengkap -->
+                      <div class="form-group row align-items-center">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Nama Lengkap <i class="la la-lock text-muted ml-1"></i></label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="<?= esc($pasien['nama']) ?>" readonly>
+                          </div>
+                      </div>
+                      <!-- ID Pasien -->
+                      <div class="form-group row align-items-center">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">ID Pasien <i class="la la-lock text-muted ml-1"></i></label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="<?= esc($pasien['id_pasien']) ?>" readonly>
+                          </div>
+                      </div>
+                      <!-- Jenis Kelamin -->
+                      <div class="form-group row align-items-center">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Jenis Kelamin <i class="la la-lock text-muted ml-1"></i></label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="<?= esc($pasien['jk'] === 'L' ? 'Laki-laki' : ($pasien['jk'] === 'P' ? 'Perempuan' : $pasien['jk'])) ?>" readonly>
+                          </div>
+                      </div>
+                      <!-- Tanggal Lahir -->
+                      <div class="form-group row align-items-center">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Tanggal Lahir <i class="la la-lock text-muted ml-1"></i></label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="<?= esc($pasien['tgl_lahir'] ?? '-') ?>" readonly>
+                          </div>
+                      </div>
+                      <!-- No. Telp -->
+                      <div class="form-group row align-items-center">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">No. Telp <i class="la la-lock text-muted ml-1"></i></label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="<?= esc($pasien['no_telp'] ?? '-') ?>" readonly>
+                          </div>
+                      </div>
+                      <!-- Alamat -->
+                      <div class="form-group row align-items-center">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Alamat <i class="la la-lock text-muted ml-1"></i></label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="<?= esc($pasien['alamat'] ?? '-') ?>" readonly>
+                          </div>
+                      </div>
+                      <!-- Golongan Darah -->
+                      <div class="form-group row align-items-center mb-0">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Golongan Darah <i class="la la-lock text-muted ml-1"></i></label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="<?= esc($pasien['gol_darah'] ?: '-') ?>" readonly>
+                          </div>
+                      </div>
+                  </div>
               </div>
-
-              <div class="form-group mt-4 border-top pt-3">
-                <button type="submit" class="btn btn-info text-white font-weight-bold">
-                  <i class="la la-save"></i> Simpan Nomor Baru
-                </button>
-              </div>
-            </form>
           </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Card Ganti Password (Kanan) -->
-    <div class="col-md-6 col-12 mb-3">
-      <div class="card h-100">
-        <div class="card-header">
-          <h4 class="card-title text-bold-600"><i class="ft-lock mr-1"></i> Ganti Password</h4>
-        </div>
-        <div class="card-content">
-          <div class="card-body">
-            <form action="<?= base_url('profil_pasien/update_password') ?>" method="POST">
-              <?= csrf_field() ?>
-              
-              <div class="form-group">
-                <label>Username</label>
-                <input type="text" class="form-control" value="<?= esc($user['username'] ?? '') ?>" readonly>
-                <small class="form-text text-muted">Username login tidak dapat diubah.</small>
+          <!-- Card UBAH NOMOR TELEPON -->
+          <div class="card mb-3 box-shadow-1">
+              <div class="card-header border-bottom py-2">
+                  <h4 class="card-title text-bold-600 mb-0">UBAH NOMOR TELEPON</h4>
               </div>
-
-              <div class="form-group">
-                <label>Password Baru <span class="text-danger">*</span></label>
-                <input type="password" name="password" class="form-control" placeholder="Password minimal 6 karakter" required>
+              <div class="card-content">
+                  <div class="card-body">
+                      <form action="<?= base_url('profil_pasien/update_info') ?>" method="POST">
+                          <?= csrf_field() ?>
+                          <div class="form-group row align-items-center">
+                              <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Nama <i class="la la-lock text-muted ml-1"></i></label>
+                              <div class="col-sm-8 col-12">
+                                  <input type="text" class="form-control bg-light" value="<?= esc($pasien['nama']) ?>" readonly>
+                              </div>
+                          </div>
+                          <div class="form-group row align-items-center">
+                              <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">No. Telp <i class="la la-phone text-muted ml-1"></i></label>
+                              <div class="col-sm-8 col-12">
+                                  <input type="text" name="no_telp" class="form-control" value="<?= esc($pasien['no_telp'] ?? '') ?>" required>
+                              </div>
+                          </div>
+                          <div class="form-group row mb-0">
+                              <div class="offset-sm-4 col-sm-8 col-12">
+                                  <button type="submit" class="btn text-white btn-block font-weight-bold" style="background-color: #2b6cb0; border: none; border-radius: 6px;">Simpan Perubahan</button>
+                              </div>
+                          </div>
+                      </form>
+                  </div>
               </div>
-
-              <div class="form-group">
-                <label>Konfirmasi Password Baru <span class="text-danger">*</span></label>
-                <input type="password" name="confirm_password" class="form-control" placeholder="Ulangi password baru" required>
-              </div>
-
-              <div class="form-group mt-4 border-top pt-3">
-                <button type="submit" class="btn btn-warning text-white font-weight-bold">
-                  <i class="la la-key"></i> Simpan Password Baru
-                </button>
-              </div>
-            </form>
           </div>
-        </div>
       </div>
-    </div>
+
+      <!-- Kolom Kanan -->
+      <div class="col-md-6 col-12">
+          <!-- Card STATUS & JAMINAN KESEHATAN -->
+          <div class="card mb-3 box-shadow-1">
+              <div class="card-header border-bottom py-2 d-flex justify-content-between align-items-center">
+                  <h4 class="card-title text-bold-600 mb-0">STATUS & JAMINAN KESEHATAN</h4>
+                  <i class="la la-lock text-muted font-medium-2"></i>
+              </div>
+              <div class="card-content">
+                  <div class="card-body">
+                      <!-- Status BPJS -->
+                      <div class="form-group row align-items-center">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Status BPJS</label>
+                          <div class="col-sm-8 col-12">
+                              <?php if (strtolower($pasien['status_bpjs'] ?? '') === 'aktif'): ?>
+                                  <span class="badge badge-success px-2 py-1" style="font-size: 0.9rem; border-radius: 6px;"><i class="la la-check-circle"></i> Aktif</span>
+                              <?php else: ?>
+                                  <span class="badge badge-danger px-2 py-1" style="font-size: 0.9rem; border-radius: 6px;"><i class="la la-times-circle"></i> Tidak Aktif</span>
+                              <?php endif; ?>
+                          </div>
+                      </div>
+                      <!-- No. BPJS -->
+                      <div class="form-group row align-items-center">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">No. BPJS <i class="la la-lock text-muted ml-1"></i></label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="<?= esc($pasien['no_bpjs'] ?: '-') ?>" readonly>
+                          </div>
+                      </div>
+                      <!-- Faskes Tingkat I -->
+                      <div class="form-group row align-items-center">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Faskes Tingkat I <i class="la la-lock text-muted ml-1"></i></label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="<?= esc($pasien['faskes'] ?: '-') ?>" readonly>
+                          </div>
+                      </div>
+                      <!-- Kelas Rawat -->
+                      <div class="form-group row align-items-center mb-0">
+                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Kelas Rawat</label>
+                          <div class="col-sm-8 col-12">
+                              <input type="text" class="form-control bg-light" value="<?= esc($pasien['kelas_rawat'] ?: '-') ?>" readonly>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Card MINTA PERUBAHAN DATA KE ADMIN -->
+          <div class="card text-white text-center py-2 px-3 mb-3 box-shadow-1" style="background-color: #2b6cb0; border-radius: 10px; border: none;">
+              <h5 class="text-white text-bold-700 mb-1" style="letter-spacing: 0.5px;">MINTA PERUBAHAN DATA KE ADMIN</h5>
+              <p class="mb-0 font-small-3 opacity-90">Hanya Admin yang dapat merubah data profil. Silakan hubungi admin di 0821-xxxx-xxxx.</p>
+          </div>
+
+          <!-- Card GANTI PASSWORD -->
+          <div class="card mb-3 box-shadow-1">
+              <div class="card-header border-bottom py-2">
+                  <h4 class="card-title text-bold-600 mb-0">GANTI PASSWORD</h4>
+              </div>
+              <div class="card-content">
+                  <div class="card-body">
+                      <form action="<?= base_url('profil_pasien/update_password') ?>" method="POST">
+                          <?= csrf_field() ?>
+                          <div class="form-group row align-items-center">
+                              <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Ganti Password <i class="la la-lock text-muted ml-1"></i></label>
+                              <div class="col-sm-8 col-12">
+                                  <input type="password" name="password" class="form-control" placeholder="Password Baru" required>
+                              </div>
+                          </div>
+                          <div class="form-group row align-items-center">
+                              <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Ganti Password <i class="la la-lock text-muted ml-1"></i></label>
+                              <div class="col-sm-8 col-12">
+                                  <input type="password" name="confirm_password" class="form-control" placeholder="Konfirmasi Password Baru" required>
+                              </div>
+                          </div>
+                          <div class="form-group row mb-0">
+                              <div class="offset-sm-4 col-sm-8 col-12">
+                                  <button type="submit" class="btn text-white btn-block font-weight-bold" style="background-color: #2b6cb0; border: none; border-radius: 6px;">Simpan Perubahan</button>
+                              </div>
+                          </div>
+                      </form>
+                  </div>
+              </div>
+          </div>
+      </div>
   </div>
 </div>
 

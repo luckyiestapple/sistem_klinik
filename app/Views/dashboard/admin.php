@@ -115,22 +115,7 @@
     </div>
   </div>
 
-  <div class="row">
-    <!-- Pendapatan Card -->
-    <div class="col-12 mb-4">
-      <div class="card bg-success text-white">
-        <div class="card-body d-flex justify-content-between align-items-center">
-          <div>
-            <h5 class="text-white mb-0">Pendapatan Resep Selesai Hari Ini</h5>
-            <h2 class="text-white font-weight-bold mt-1">Rp <?= number_format($pendapatan, 0, ',', '.') ?></h2>
-          </div>
-          <div>
-            <i class="ft-trending-up" style="font-size: 3rem; opacity: 0.8;"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
   <!-- ── End Stat Cards ──────────────────────── -->
 
   <!-- ── Tables ──────────────────────────────── -->

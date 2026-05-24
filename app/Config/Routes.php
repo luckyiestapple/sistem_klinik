@@ -62,6 +62,7 @@ $routes->group('', ['filter' => 'dokterAuth'], function($routes) {
     $routes->post('/dokter/antrian/selesai/(:any)', 'DashboardDokter::selesaiAntrian/$1');
     $routes->get('/dokter/profil', 'DashboardDokter::profil');
     $routes->post('/dokter/profil/update', 'DashboardDokter::profilUpdate');
+    $routes->post('/dokter/profil/update_foto', 'DashboardDokter::updateFoto');
 
     // Rekam Medis (Input/Edit hanya Dokter)
     $routes->get('/rekam_medis/tambah',       'RekamMedis::tambah');
@@ -80,6 +81,7 @@ $routes->group('', ['filter' => 'pasienAuth'], function($routes) {
     $routes->get('/profil_pasien', 'DashboardPasien::profil');
     $routes->post('/profil_pasien/update_info', 'DashboardPasien::updateInfo');
     $routes->post('/profil_pasien/update_password', 'DashboardPasien::updatePassword');
+    $routes->post('/profil_pasien/update_foto', 'DashboardPasien::updateFoto');
     $routes->get('/antrian', 'DashboardPasien::antrian');
     $routes->post('/antrian/simpan', 'DashboardPasien::simpanAntrian');
     $routes->get('/resep_pasien', 'DashboardPasien::resep');
