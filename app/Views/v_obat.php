@@ -72,11 +72,13 @@
                       <td><?= $o['tgl_expired'] ? date('d/m/Y', strtotime($o['tgl_expired'])) : '-' ?></td>
                       <td>Rp <?= number_format($o['harga'], 0, ',', '.') ?></td>
                       <td>
-                        <a href="<?= base_url('obat/edit/'.$o['kode_obat']) ?>"
-                           class="btn btn-sm btn-outline-warning" title="Edit"><i class="la la-edit"></i> Edit</a>
-                        <a href="<?= base_url('obat/hapus/'.$o['kode_obat']) ?>"
-                           class="btn btn-sm btn-outline-danger" title="Hapus"
-                           onclick="return confirm('Hapus obat ini?')"><i class="la la-trash"></i> Hapus</a>
+                        <div class="d-flex" style="gap:5px;">
+                          <a href="<?= base_url('obat/edit/'.$o['kode_obat']) ?>"
+                             class="btn btn-sm btn-outline-warning" title="Edit"><i class="la la-edit"></i> Edit</a>
+                          <a href="<?= base_url('obat/hapus/'.$o['kode_obat']) ?>"
+                             class="btn btn-sm btn-outline-danger" title="Hapus"
+                             onclick="return confirm('Hapus obat ini?')"><i class="la la-trash"></i> Hapus</a>
+                        </div>
                       </td>
                     </tr>
                     <?php endforeach; ?>

@@ -70,14 +70,14 @@
                       <td class="text-truncate" style="max-width:180px;"><?= esc($r['keluhan']) ?></td>
                       <td class="font-weight-bold text-success"><?= esc($r['diagnosa']) ?></td>
                       <td>
-                        <div class="btn-group btn-group-sm">
+                        <div class="d-flex flex-wrap" style="gap:5px;">
                           <a href="<?= base_url('rekam_medis/detail/'.$r['id_rekam_medis']) ?>"
-                             class="btn btn-info text-white" title="Detail"><i class="la la-eye"></i> Detail</a>
+                             class="btn btn-sm btn-info text-white" title="Detail"><i class="la la-eye"></i> Detail</a>
                           <a href="<?= base_url('rekam_medis/edit/'.$r['id_rekam_medis']) ?>"
-                             class="btn btn-warning text-white" title="Edit"><i class="la la-edit"></i> Edit</a>
+                             class="btn btn-sm btn-warning text-white" title="Edit"><i class="la la-edit"></i> Edit</a>
                           <?php if (session()->get('id_level') == 1): ?>
                             <a href="<?= base_url('rekam_medis/hapus/'.$r['id_rekam_medis']) ?>"
-                               class="btn btn-danger" title="Hapus"
+                               class="btn btn-sm btn-danger" title="Hapus"
                                onclick="return confirm('Hapus rekam medis ini?')"><i class="la la-trash"></i> Hapus</a>
                           <?php endif; ?>
                         </div>

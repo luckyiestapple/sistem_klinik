@@ -84,7 +84,9 @@ $routes->group('', ['filter' => 'pasienAuth'], function($routes) {
     $routes->post('/antrian/simpan', 'DashboardPasien::simpanAntrian');
     $routes->get('/resep_pasien', 'DashboardPasien::resep');
     $routes->get('/resep_pasien/detail/(:any)', 'DashboardPasien::resepDetail/$1');
+    $routes->post('/resep_pasien/konfirmasi/(:any)', 'DashboardPasien::konfirmasiPengambilan/$1');
     $routes->get('/rekam_medis_pasien', 'DashboardPasien::rekamMedis');
+    $routes->get('/rekam_medis_pasien/detail/(:any)', 'DashboardPasien::rekamMedisDetail/$1');
 });
 
 // ── Shared (Admin & Dokter - Level 1 & 3) ──────────────────

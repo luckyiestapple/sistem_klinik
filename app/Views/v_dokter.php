@@ -44,11 +44,13 @@
                       <td><span class="badge badge-light"><?= esc($d['spesialisasi']) ?></span></td>
                       <td><?= esc($d['alamat'] ?? '-') ?></td>
                       <td>
-                        <a href="<?= base_url('dokter/edit/'.$d['id_dokter']) ?>"
-                           class="btn btn-sm btn-outline-warning" title="Edit"><i class="la la-edit"></i></a>
-                        <a href="<?= base_url('dokter/hapus/'.$d['id_dokter']) ?>"
-                           class="btn btn-sm btn-outline-danger" title="Hapus"
-                           onclick="return confirm('Hapus dokter ini?')"><i class="la la-trash"></i></a>
+                        <div class="d-flex" style="gap:5px;">
+                          <a href="<?= base_url('dokter/edit/'.$d['id_dokter']) ?>"
+                             class="btn btn-sm btn-outline-warning" title="Edit"><i class="la la-edit"></i></a>
+                          <a href="<?= base_url('dokter/hapus/'.$d['id_dokter']) ?>"
+                             class="btn btn-sm btn-outline-danger" title="Hapus"
+                             onclick="return confirm('Hapus dokter ini?')"><i class="la la-trash"></i></a>
+                        </div>
                       </td>
                     </tr>
                     <?php endforeach; ?>

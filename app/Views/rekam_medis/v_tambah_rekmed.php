@@ -147,9 +147,9 @@
                 <input type="date" name="tgl_kontrol" class="form-control" value="<?= old('tgl_kontrol') ?>">
               </div>
 
-              <div class="form-group mt-3 border-top pt-3">
+              <div class="form-group mt-3 border-top pt-3 d-flex" style="gap:10px;">
                 <button type="submit" class="btn btn-primary"><i class="la la-save"></i> Simpan Rekam Medis</button>
-                <a href="<?= base_url('rekam_medis') ?>" class="btn btn-secondary ml-1">Batal</a>
+                <a href="<?= base_url('rekam_medis') ?>" class="btn btn-secondary">Batal</a>
               </div>
             </form>
           </div>

@@ -93,11 +93,13 @@ class Resep extends BaseController
         // Only show active and in-stock medicines
         $obat = $obatModel->where('stok >', 0)->findAll();
 
+        $level = session()->get('id_level');
         $data = [
             'title'       => 'Buat Resep',
             'rekam_medis' => $rekmed,
             'obat'        => $obat,
             'is_bpjs'     => (strtolower($rekmed['status_bpjs'] ?? '') === 'aktif'),
+            'is_dokter'   => ($level == 3),
         ];
         return view('resep/v_tambah_resep', $data);
     }
@@ -131,11 +133,21 @@ class Resep extends BaseController
             $pasien = $pasienModel->find($rm['id_pasien']);
             $isBpjs = (strtolower($pasien['status_bpjs'] ?? '') === 'aktif');
 
-            // Hitung total (BPJS = gratis Rp0, Non-BPJS = normal)
+            $isDokter = (session()->get('id_level') == 3);
+
+            // Hitung total
+            // Jika dokter: ambil harga dari db obat. Jika admin: ambil dari form input.
             $total = 0;
             if (!$isBpjs) {
+                $obatModelTemp = new Modelobat();
                 foreach ($jumlahArr as $i => $jml) {
-                    $total += (int)$jml * (float)$hargaArr[$i];
+                    if ($isDokter) {
+                        // Harga dari database
+                        $obatRow = $obatModelTemp->find($idObatArr[$i]);
+                        $total += (int)$jml * (float)($obatRow['harga'] ?? 0);
+                    } else {
+                        $total += (int)$jml * (float)$hargaArr[$i];
+                    }
                 }
             }
 
@@ -166,12 +178,14 @@ class Resep extends BaseController
                 }
 
                 // Simpan detail
+                // Jika dokter: ambil harga dari database obat
+                $hargaItem = $isDokter ? (float)($obat['harga'] ?? 0) : (float)($hargaArr[$i] ?? 0);
                 $this->detailModel->insert([
                     'kode_resep'   => $idResep,
                     'kode_obat'    => $idObat,
                     'jumlah'       => $jumlahArr[$i],
                     'dosis'        => $dosisArr[$i],
-                    'harga'        => $hargaArr[$i],
+                    'harga'        => $hargaItem,
                 ]);
 
                 // Update stok obat
@@ -221,10 +235,11 @@ class Resep extends BaseController
         $isBpjs = (strtolower($resep['status_bpjs'] ?? '') === 'aktif');
 
         $data = [
-            'title'   => 'Detail Resep',
-            'resep'   => $resep,
-            'detail'  => $detail,
-            'is_bpjs' => $isBpjs,
+            'title'     => 'Detail Resep',
+            'resep'     => $resep,
+            'detail'    => $detail,
+            'is_bpjs'   => $isBpjs,
+            'is_dokter' => (session()->get('id_level') == 3),
         ];
         return view('resep/v_detail_resep', $data);
     }

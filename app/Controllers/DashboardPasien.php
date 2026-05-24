@@ -275,4 +275,59 @@ class DashboardPasien extends BaseController
 
         return redirect()->to(base_url('profil_pasien'))->with('error', 'User tidak ditemukan.');
     }
+    public function konfirmasiPengambilan($id)
+    {
+        if (!$this->checkAuth()) {
+            return redirect()->to(base_url('login'))->with('error', 'Akses ditolak.');
+        }
+
+        $id_pasien = session()->get('id_referensi');
+        $resepModel = new Modelresep();
+        $resep = $resepModel->where('id_resep', $id)->where('id_pasien', $id_pasien)->first();
+
+        if (!$resep) {
+            return redirect()->to(base_url('resep_pasien'))->with('error', 'Resep tidak ditemukan.');
+        }
+
+        if (($resep['status'] ?? 'menunggu') !== 'diproses') {
+            return redirect()->to(base_url('resep_pasien'))->with('error', 'Resep belum siap diambil. Tunggu konfirmasi Apoteker.');
+        }
+
+        $resepModel->update($id, ['status' => 'selesai']);
+        return redirect()->to(base_url('resep_pasien'))->with('success', 'Obat berhasil dikonfirmasi pengambilannya!');
+    }
+
+    public function rekamMedisDetail($id)
+    {
+        if (!$this->checkAuth()) {
+            return redirect()->to(base_url('login'))->with('error', 'Akses ditolak.');
+        }
+
+        $id_pasien = session()->get('id_referensi');
+        $db = \Config\Database::connect();
+
+        $rekmed = $db->table('tb_rekam_medis rm')
+            ->select('rm.*, p.nama AS nama_pasien, d.nama AS nama_dokter, d.spesialisasi')
+            ->join('tb_pasien p', 'p.id_pasien = rm.id_pasien')
+            ->join('tb_dokter d', 'd.id_dokter = rm.id_dokter')
+            ->where('rm.id_rekam_medis', $id)
+            ->where('rm.id_pasien', $id_pasien)
+            ->get()->getRowArray();
+
+        if (!$rekmed) {
+            return redirect()->to(base_url('rekam_medis_pasien'))->with('error', 'Data rekam medis tidak ditemukan.');
+        }
+
+        // Ambil resep terkait rekam medis ini
+        $resepModel = new Modelresep();
+        $detailResepModel = new Modeldetailresep();
+        $resepList = $resepModel->where('id_pasien', $rekmed['id_pasien'])->where('id_dokter', $rekmed['id_dokter'])->orderBy('tgl_resep', 'DESC')->findAll(3);
+
+        $data = [
+            'title'    => 'Detail Rekam Medis',
+            'rekmed'   => $rekmed,
+            'resepList' => $resepList,
+        ];
+        return view('dashboard/rekam_medis_detail', $data);
+    }
 }

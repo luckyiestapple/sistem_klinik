@@ -46,23 +46,30 @@
                                                 <td class="align-middle"><strong>RSP-<?= str_pad($r['id_resep'], 4, '0', STR_PAD_LEFT) ?></strong></td>
                                                 <td class="align-middle"><?= date('d/m/Y', strtotime($r['tgl_resep'])) ?></td>
                                                 <td class="align-middle"><strong><?= esc($r['nama_dokter']) ?></strong></td>
-                                                <td class="align-middle">Rp <?= number_format($r['total_harga'], 0, ',', '.') ?></td>
+                                                <td class="align-middle"><?php $statusR = $r['status'] ?? 'menunggu'; if ($r['status_bpjs'] === 'Aktif'): ?><span class="badge badge-success">Rp 0 (BPJS)</span><?php else: ?>Rp <?= number_format($r['total_harga'], 0, ',', '.') ?><?php endif; ?></td>
                                                 <td class="text-center align-middle">
-                                                    <?php 
-                                                    $status = $r['status'] ?? 'menunggu';
-                                                    if ($status === 'selesai'): 
-                                                    ?>
+                                                    <?php $statusR = $r['status'] ?? 'menunggu'; if ($statusR === 'selesai'): ?>
                                                         <span class="badge badge-success">Selesai / Diambil</span>
-                                                    <?php elseif ($status === 'diproses'): ?>
+                                                    <?php elseif ($statusR === 'diproses'): ?>
                                                         <span class="badge badge-warning text-white">Sedang Diproses</span>
                                                     <?php else: ?>
                                                         <span class="badge badge-danger">Menunggu Apoteker</span>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="text-center align-middle">
-                                                    <a href="<?= base_url('resep_pasien/detail/'.$r['id_resep']) ?>" class="btn btn-sm btn-teal rounded-pill px-3">
-                                                        <i class="ft-eye"></i> Detail Obat
-                                                    </a>
+                                                    <div class="d-flex justify-content-center flex-wrap" style="gap:6px;">
+                                                        <a href="<?= base_url('resep_pasien/detail/'.$r['id_resep']) ?>" class="btn btn-sm btn-teal rounded-pill px-3">
+                                                            <i class="ft-eye"></i> Detail
+                                                        </a>
+                                                        <?php if (($r['status'] ?? 'menunggu') === 'diproses'): ?>
+                                                        <form method="POST" action="<?= base_url('resep_pasien/konfirmasi/'.$r['id_resep']) ?>" onsubmit="return confirm('Konfirmasi bahwa Anda sudah mengambil obat ini?')">
+                                                            <?= csrf_field() ?>
+                                                            <button type="submit" class="btn btn-sm btn-success rounded-pill px-3">
+                                                                <i class="la la-check-circle"></i> Ambil Obat
+                                                            </button>
+                                                        </form>
+                                                        <?php endif; ?>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

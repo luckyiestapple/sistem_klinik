@@ -47,6 +47,7 @@
                                             <th>Keluhan & Pemeriksaan Fisik</th>
                                             <th width="250">Hasil Diagnosa Dokter</th>
                                             <th width="150">Kontrol Kembali</th>
+                                            <th width="90" class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -87,6 +88,11 @@
                                                     <?php else: ?>
                                                         <span class="text-muted">-</span>
                                                     <?php endif; ?>
+                                                </td>
+                                                <td class="text-center align-middle">
+                                                    <a href="<?= base_url('rekam_medis_pasien/detail/'.$r['id_rekam_medis']) ?>" class="btn btn-sm btn-teal rounded-pill px-3">
+                                                        <i class="ft-eye"></i> Detail
+                                                    </a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

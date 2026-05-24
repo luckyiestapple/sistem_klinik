@@ -47,7 +47,7 @@
             <form action="<?= base_url('pasien') ?>" method="GET" class="mb-3">
               <div class="input-group col-md-4 pl-0">
                 <input type="text" name="keyword" class="form-control" placeholder="Cari Nama Pasien atau ID..." value="<?= esc($keyword ?? '') ?>">
-                <div class="input-group-append">
+                <div class="input-group-append d-flex" style="gap:5px;">
                   <button class="btn btn-info" type="submit"><i class="ft-search"></i> Cari</button>
                   <?php if (!empty($keyword)): ?>
                     <a href="<?= base_url('pasien') ?>" class="btn btn-secondary">Reset</a>
@@ -80,13 +80,15 @@
                       <td><?= $p['tgl_lahir'] ? date('d/m/Y', strtotime($p['tgl_lahir'])) : '-' ?></td>
                       <td><?= esc($p['no_telp'] ?? '-') ?></td>
                       <td>
-                        <a href="<?= base_url('pasien/edit/'.$p['id_pasien']) ?>"
-                           class="btn btn-sm btn-outline-warning" title="Edit"><i class="la la-edit"></i> Edit</a>
-                        <a href="<?= base_url('pasien/hapus/'.$p['id_pasien']) ?>"
-                           class="btn btn-sm btn-outline-danger" title="Hapus"
-                           onclick="return confirm('Hapus pasien ini? Semua data rekam medis dan akun login terkait akan ikut terhapus.')">
-                           <i class="la la-trash"></i> Hapus
-                        </a>
+                        <div class="d-flex" style="gap:5px;">
+                          <a href="<?= base_url('pasien/edit/'.$p['id_pasien']) ?>"
+                             class="btn btn-sm btn-outline-warning" title="Edit"><i class="la la-edit"></i> Edit</a>
+                          <a href="<?= base_url('pasien/hapus/'.$p['id_pasien']) ?>"
+                             class="btn btn-sm btn-outline-danger" title="Hapus"
+                             onclick="return confirm('Hapus pasien ini? Semua data rekam medis dan akun login terkait akan ikut terhapus.')">
+                             <i class="la la-trash"></i> Hapus
+                          </a>
+                        </div>
                       </td>
                     </tr>
                     <?php endforeach; ?>
