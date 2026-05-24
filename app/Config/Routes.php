@@ -32,6 +32,7 @@ $routes->group('', ['filter' => 'adminAuth'], function($routes) {
     $routes->get('/dokter/edit/(:any)', 'Dokter::edit/$1');
     $routes->post('/dokter/update/(:any)', 'Dokter::update/$1');
     $routes->get('/dokter/hapus/(:any)', 'Dokter::hapus/$1');
+    $routes->get('/dokter/reset_foto/(:any)', 'Dokter::resetFoto/$1');
 
     // Data Pasien
     $routes->get('/pasien',            'Pasien::index');
@@ -40,6 +41,7 @@ $routes->group('', ['filter' => 'adminAuth'], function($routes) {
     $routes->get('/pasien/edit/(:any)', 'Pasien::edit/$1');
     $routes->post('/pasien/update/(:any)', 'Pasien::update/$1');
     $routes->get('/pasien/hapus/(:any)', 'Pasien::hapus/$1');
+    $routes->get('/pasien/reset_foto/(:any)', 'Pasien::resetFoto/$1');
 
     // Data Obat
     $routes->get('/obat',            'Obat::index');

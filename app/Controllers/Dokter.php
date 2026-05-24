@@ -209,4 +209,30 @@ class Dokter extends BaseController
 
         return redirect()->to('/dokter');
     }
+
+    public function resetFoto($id)
+    {
+        if ($r = $this->authCheck()) return $r;
+
+        $dokter = $this->model->find($id);
+        if ($dokter) {
+            // Delete actual file
+            if (!empty($dokter['foto'])) {
+                $filePath = ROOTPATH . 'public/uploads/profile/' . $dokter['foto'];
+                if (file_exists($filePath)) {
+                    @unlink($filePath);
+                }
+            }
+
+            $this->model->update($id, [
+                'foto'            => null,
+                'foto_updated_at' => null
+            ]);
+            session()->setFlashdata('success', 'Foto profil dokter berhasil di-reset.');
+        } else {
+            session()->setFlashdata('error', 'Dokter tidak ditemukan.');
+        }
+
+        return redirect()->to('/dokter/edit/' . $id);
+    }
 }

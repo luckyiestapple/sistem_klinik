@@ -29,6 +29,31 @@
               
               <!-- Bagian 1: Data Identitas Diri -->
               <h5 class="form-section text-info"><i class="la la-user"></i> 1. Identitas Diri</h5>
+              
+              <div class="row mb-3 align-items-center bg-light p-2 rounded mx-1">
+                <div class="col-md-2 col-12 text-center">
+                  <?php 
+                  if (!empty($pasien['foto'])) {
+                      $avatarUrl = base_url('uploads/profile/' . $pasien['foto']);
+                  } else {
+                      $avatarUrl = 'https://api.dicebear.com/7.x/adventurer/svg?seed=' . urlencode($pasien['nama'] ?? 'Pasien');
+                  }
+                  ?>
+                  <img src="<?= $avatarUrl ?>" class="rounded bg-white img-thumbnail" style="width: 80px; height: 80px; object-fit: cover; aspect-ratio: 1/1; border-radius: 12px;">
+                </div>
+                <div class="col-md-10 col-12 text-center text-md-left">
+                  <h6 class="text-bold-600 mb-0">Foto Profil Pasien</h6>
+                  <?php if (!empty($pasien['foto'])): ?>
+                    <p class="text-muted font-small-3 mb-1">Foto ini diunggah oleh pasien pada <?= date('d M Y H:i', strtotime($pasien['foto_updated_at'])) ?></p>
+                    <a href="<?= base_url('pasien/reset_foto/' . $pasien['id_pasien']) ?>" class="btn btn-danger btn-sm font-weight-bold" onclick="return confirm('Apakah Anda yakin ingin menghapus/reset foto profil pasien ini? Tindakan ini akan mengizinkan pasien untuk mengunggah foto baru.')">
+                      <i class="la la-trash"></i> Reset Foto Profil (Izinkan Unggah Ulang)
+                    </a>
+                  <?php else: ?>
+                    <p class="text-muted font-small-3 mb-0">Pasien belum mengunggah foto profil (menggunakan avatar default).</p>
+                  <?php endif; ?>
+                </div>
+              </div>
+
               <div class="row">
                 <div class="col-md-6 col-12">
                   <div class="form-group">

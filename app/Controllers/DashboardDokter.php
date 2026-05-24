@@ -174,7 +174,44 @@ class DashboardDokter extends BaseController
             return redirect()->to(base_url('dokter/profil'))->with('error', 'Foto profil sudah diunggah dan tidak dapat diubah lagi.');
         }
 
-        // Validate upload
+        // Prioritize Cropped Image (Base64)
+        $foto_base64 = $this->request->getPost('foto_cropped');
+        if (!empty($foto_base64)) {
+            if (preg_match('/^data:image\/(\w+);base64,/', $foto_base64, $type)) {
+                $data = substr($foto_base64, strpos($foto_base64, ',') + 1);
+                $type = strtolower($type[1]); // png, jpeg, etc.
+                if (in_array($type, ['jpg', 'jpeg', 'png', 'gif'])) {
+                    $data = base64_decode($data);
+                    if ($data !== false) {
+                        $newName = bin2hex(random_bytes(10)) . '.' . $type;
+                        $uploadPath = ROOTPATH . 'public/uploads/profile/';
+                        
+                        if (!is_dir($uploadPath)) {
+                            mkdir($uploadPath, 0777, true);
+                        }
+
+                        // Remove old photo if exists
+                        if (!empty($dokter['foto'])) {
+                            $oldFilePath = $uploadPath . $dokter['foto'];
+                            if (file_exists($oldFilePath)) {
+                                @unlink($oldFilePath);
+                            }
+                        }
+
+                        if (file_put_contents($uploadPath . $newName, $data) !== false) {
+                            $this->dokterModel->update($idDokter, [
+                                'foto'            => $newName,
+                                'foto_updated_at' => date('Y-m-d H:i:s')
+                            ]);
+                            return redirect()->to(base_url('dokter/profil'))->with('success', 'Foto profil berhasil diunggah.');
+                        }
+                    }
+                }
+            }
+            return redirect()->to(base_url('dokter/profil'))->with('error', 'Format gambar crop tidak valid.');
+        }
+
+        // Fallback to standard upload
         $validationRules = [
             'foto' => [
                 'rules' => 'uploaded[foto]|max_size[foto,2048]|is_image[foto]|mime_in[foto,image/png,image/jpg,image/jpeg,image/gif]',

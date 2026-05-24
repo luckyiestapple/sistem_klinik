@@ -72,12 +72,7 @@ class Pasien extends BaseController
                 'status_bpjs'         => $this->request->getPost('status_bpjs') ?: 'Tidak Aktif',
                 'faskes'              => $this->request->getPost('faskes') ?: null,
                 'kelas_rawat'         => $this->request->getPost('kelas_rawat') ?: null,
-                'gol_darah'           => $this->request->getPost('gol_darah'),
-                'alergi_obat'         => $this->request->getPost('alergi_obat'),
-                'riwayat_penyakit'    => $this->request->getPost('riwayat_penyakit'),
-                'kontak_darurat_nama' => $this->request->getPost('kontak_darurat_nama'),
-                'kontak_darurat_telp' => $this->request->getPost('kontak_darurat_telp'),
-            ];
+         ];
 
             $this->model->insert($dataPasien);
 
@@ -229,5 +224,31 @@ class Pasien extends BaseController
         }
 
         return redirect()->to('/pasien');
+    }
+
+    public function resetFoto($id)
+    {
+        if ($r = $this->authCheck()) return $r;
+
+        $pasien = $this->model->find($id);
+        if ($pasien) {
+            // Delete actual file
+            if (!empty($pasien['foto'])) {
+                $filePath = ROOTPATH . 'public/uploads/profile/' . $pasien['foto'];
+                if (file_exists($filePath)) {
+                    @unlink($filePath);
+                }
+            }
+
+            $this->model->update($id, [
+                'foto'            => null,
+                'foto_updated_at' => null
+            ]);
+            session()->setFlashdata('success', 'Foto profil pasien berhasil di-reset.');
+        } else {
+            session()->setFlashdata('error', 'Pasien tidak ditemukan.');
+        }
+
+        return redirect()->to('/pasien/edit/' . $id);
     }
 }

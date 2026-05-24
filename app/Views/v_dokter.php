@@ -27,22 +27,33 @@
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Foto</th>
                     <th>ID Dokter</th>
                     <th>Nama Dokter</th>
                     <th>Spesialisasi</th>
-                    <th>Alamat</th>
+                    <th>No. Telp</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
                   <?php if (!empty($dokter)): $no = 1; ?>
                     <?php foreach ($dokter as $d): ?>
+                    <?php
+                      $fotoUrl = !empty($d['foto'])
+                        ? base_url('uploads/profile/' . $d['foto'])
+                        : 'https://api.dicebear.com/7.x/adventurer/svg?seed=' . urlencode($d['nama'] ?? 'Dokter');
+                    ?>
                     <tr>
                       <td><?= $no++ ?></td>
+                      <td>
+                        <img src="<?= $fotoUrl ?>" alt="Foto <?= esc($d['nama']) ?>"
+                             style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #e9ecef;"
+                             onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=<?= urlencode($d['nama'] ?? 'Dokter') ?>'">
+                      </td>
                       <td><span class="badge badge-info"><?= $d['id_dokter'] ?></span></td>
                       <td><?= esc($d['nama']) ?></td>
                       <td><span class="badge badge-light"><?= esc($d['spesialisasi']) ?></span></td>
-                      <td><?= esc($d['alamat'] ?? '-') ?></td>
+                      <td><?= esc($d['no_telp'] ?? '-') ?></td>
                       <td>
                         <div class="d-flex" style="gap:5px;">
                           <a href="<?= base_url('dokter/edit/'.$d['id_dokter']) ?>"
@@ -55,7 +66,7 @@
                     </tr>
                     <?php endforeach; ?>
                   <?php else: ?>
-                    <tr><td colspan="6" class="text-center text-muted py-3">Belum ada data dokter.</td></tr>
+                    <tr><td colspan="7" class="text-center text-muted py-3">Belum ada data dokter.</td></tr>
                   <?php endif; ?>
                 </tbody>
               </table>

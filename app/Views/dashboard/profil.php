@@ -260,4 +260,138 @@
   </div>
 </div>
 
+<!-- Modal Cropper -->
+<div class="modal fade text-left" id="cropperModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="border-radius: 12px; overflow: hidden;">
+            <div class="modal-header bg-info text-white py-2">
+                <h5 class="modal-title text-white text-bold-600"><i class="la la-crop"></i> Potong Foto Profil</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" id="btnCancelCrop">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-3 text-center">
+                <div style="max-height: 380px; width: 100%; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa; border-radius: 8px; overflow: hidden;">
+                    <img id="cropperImageSrc" style="max-width: 100%; max-height: 360px;">
+                </div>
+                <small class="text-muted mt-2 d-block">Geser atau sesuaikan kotak potong agar pas di bagian wajah Anda.</small>
+            </div>
+            <div class="modal-footer d-flex justify-content-between py-2">
+                <button type="button" class="btn btn-secondary btn-sm font-weight-bold" data-dismiss="modal" id="btnCancelCrop2">Batal</button>
+                <button type="button" class="btn btn-warning btn-sm font-weight-bold text-dark" id="btnDoCrop" style="background-color: #ffc107; border: none;">
+                    <i class="la la-check"></i> Potong & Unggah
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?= $this->endSection() ?>
+
+<?= $this->section('css') ?>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+<style>
+  /* Enforce circular cropper box for beautiful circle avatar alignment */
+  .cropper-view-box,
+  .cropper-face {
+    border-radius: 50%;
+  }
+</style>
+<?= $this->endSection() ?>
+
+<?= $this->section('script') ?>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      const uploadInput = document.getElementById('uploadFotoInput');
+      const cropperModal = $('#cropperModal');
+      const cropperImageSrc = document.getElementById('cropperImageSrc');
+      const btnDoCrop = document.getElementById('btnDoCrop');
+      const btnCancelCrop = document.getElementById('btnCancelCrop');
+      const btnCancelCrop2 = document.getElementById('btnCancelCrop2');
+      let cropperInstance = null;
+      let photoForm = null;
+
+      if (uploadInput) {
+          photoForm = uploadInput.closest('form');
+          
+          // Add hidden input to hold base64 cropped image data
+          const hiddenInput = document.createElement('input');
+          hiddenInput.type = 'hidden';
+          hiddenInput.name = 'foto_cropped';
+          hiddenInput.id = 'fotoCroppedInput';
+          photoForm.appendChild(hiddenInput);
+
+          uploadInput.addEventListener('change', function(e) {
+              const files = e.target.files;
+              if (files && files.length > 0) {
+                  const file = files[0];
+                  
+                  // Simple check for image format
+                  if (!file.type.startsWith('image/')) {
+                      alert('Format berkas harus berupa gambar.');
+                      uploadInput.value = '';
+                      return;
+                  }
+
+                  const reader = new FileReader();
+                  reader.onload = function(evt) {
+                      cropperImageSrc.src = evt.target.result;
+                      
+                      // Show the modal
+                      cropperModal.modal('show');
+                  };
+                  reader.readAsDataURL(file);
+              }
+          });
+
+          // Initialize cropper after modal is fully shown
+          cropperModal.on('shown.bs.modal', function() {
+              cropperInstance = new Cropper(cropperImageSrc, {
+                  aspectRatio: 1,
+                  viewMode: 1,
+                  autoCropArea: 0.9,
+                  dragMode: 'move',
+                  cropBoxResizable: true,
+                  cropBoxMovable: true
+              });
+          });
+
+          // Destroy cropper when modal is hidden
+          cropperModal.on('hidden.bs.modal', function() {
+              if (cropperInstance) {
+                  cropperInstance.destroy();
+                  cropperInstance = null;
+              }
+              uploadInput.value = '';
+              const uploadLabel = document.getElementById('upload-label');
+              if (uploadLabel) uploadLabel.innerText = 'Pilih foto...';
+          });
+
+          // Handle crop action
+          btnDoCrop.addEventListener('click', function() {
+              if (cropperInstance) {
+                  const canvas = cropperInstance.getCroppedCanvas({
+                      width: 400,
+                      height: 400
+                  });
+
+                  if (canvas) {
+                      const croppedBase64 = canvas.toDataURL('image/jpeg', 0.9);
+                      document.getElementById('fotoCroppedInput').value = croppedBase64;
+                      
+                      // Hide modal and submit form automatically
+                      cropperModal.modal('hide');
+                      
+                      // Add loading indicator
+                      btnDoCrop.innerHTML = '<i class="la la-spinner la-spin"></i> Memproses...';
+                      btnDoCrop.disabled = true;
+
+                      photoForm.submit();
+                  }
+              }
+          });
+      }
+  });
+</script>
 <?= $this->endSection() ?>

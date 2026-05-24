@@ -28,6 +28,31 @@
               <?= csrf_field() ?>
               
               <h5 class="form-section text-info"><i class="la la-user-md"></i> 1. Profil Dokter</h5>
+              
+              <div class="row mb-3 align-items-center bg-light p-2 rounded mx-1">
+                <div class="col-md-2 col-12 text-center">
+                  <?php 
+                  if (!empty($dokter['foto'])) {
+                      $avatarUrl = base_url('uploads/profile/' . $dokter['foto']);
+                  } else {
+                      $avatarUrl = 'https://api.dicebear.com/7.x/adventurer/svg?seed=' . urlencode($dokter['nama'] ?? 'Dokter');
+                  }
+                  ?>
+                  <img src="<?= $avatarUrl ?>" class="rounded-circle bg-white img-thumbnail" style="width: 80px; height: 80px; object-fit: cover; aspect-ratio: 1/1;">
+                </div>
+                <div class="col-md-10 col-12 text-center text-md-left">
+                  <h6 class="text-bold-600 mb-0">Foto Profil Dokter</h6>
+                  <?php if (!empty($dokter['foto'])): ?>
+                    <p class="text-muted font-small-3 mb-1">Foto ini diunggah oleh dokter pada <?= date('d M Y H:i', strtotime($dokter['foto_updated_at'])) ?></p>
+                    <a href="<?= base_url('dokter/reset_foto/' . $dokter['id_dokter']) ?>" class="btn btn-danger btn-sm font-weight-bold" onclick="return confirm('Apakah Anda yakin ingin menghapus/reset foto profil dokter ini? Tindakan ini akan mengizinkan dokter untuk mengunggah foto baru.')">
+                      <i class="la la-trash"></i> Reset Foto Profil (Izinkan Unggah Ulang)
+                    </a>
+                  <?php else: ?>
+                    <p class="text-muted font-small-3 mb-0">Dokter belum mengunggah foto profil (menggunakan avatar default).</p>
+                  <?php endif; ?>
+                </div>
+              </div>
+
               <div class="row">
                 <div class="col-md-6 col-12">
                   <div class="form-group">
