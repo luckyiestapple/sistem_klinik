@@ -162,7 +162,7 @@ class RekamMedis extends BaseController
         if ($r = $this->authCheck()) return $r;
 
         $rekmed = $this->db->table('tb_rekam_medis rm')
-            ->select('rm.*, p.nama AS nama_pasien, p.jk, p.tgl_lahir, p.no_telp, p.gol_darah, p.alergi_obat, d.nama AS nama_dokter, d.spesialisasi')
+            ->select('rm.*, p.nama AS nama_pasien, p.jk, p.tgl_lahir, p.no_telp, d.nama AS nama_dokter, d.spesialisasi')
             ->join('tb_pasien p', 'p.id_pasien = rm.id_pasien')
             ->join('tb_dokter d', 'd.id_dokter = rm.id_dokter')
             ->where('rm.id_rekam_medis', $id)

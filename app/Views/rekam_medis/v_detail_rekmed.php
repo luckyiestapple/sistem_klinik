@@ -1,7 +1,23 @@
 <?= $this->extend('templates/template') ?>
+<?= $this->section('css') ?>
+<style>
+@media print {
+  .no-print, .sidebar, .header-navbar, .content-header, nav, .breadcrumb,
+  .btn, form, .heading-elements, .card-header .heading-elements, .main-menu { display: none !important; }
+  .card { border: none !important; box-shadow: none !important; margin: 0 !important; padding: 0 !important; }
+  .card-header { background: none !important; color: #000 !important; border: none !important; }
+  body { font-size: 12px; background-color: #fff !important; }
+  .print-header { display: block !important; }
+  .app-content { margin-left: 0 !important; padding: 0 !important; }
+  .content-wrapper { padding: 0 !important; }
+}
+.print-header { display: none; }
+</style>
+<?= $this->endSection() ?>
+
 <?= $this->section('konten') ?>
 
-<div class="content-header row">
+<div class="content-header row no-print">
   <div class="content-header-left col-12 mb-2">
     <h3 class="content-header-title">Detail Rekam Medis</h3>
     <ol class="breadcrumb">
@@ -11,6 +27,15 @@
   </div>
 </div>
 
+<!-- Print Header (hanya muncul saat print) -->
+<div class="print-header text-center mb-3">
+  <h3 class="font-weight-bold">KLINIK SEHAT</h3>
+  <p class="mb-0">Jl. Kesehatan No. 1 | Telp: (021) 000-0000</p>
+  <hr>
+  <h4 class="font-weight-bold">STRUK REKAM MEDIS</h4>
+  <p>No. Rekam Medis: #<?= $rekam_medis['id_rekam_medis'] ?> | Tanggal: <?= date('d F Y', strtotime($rekam_medis['tgl_periksa'])) ?></p>
+</div>
+
 <div class="content-body">
   <div class="row">
     <div class="col-md-10 offset-md-1 col-12">
@@ -18,6 +43,11 @@
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
           <h4 class="card-title">Rincian Rekam Medis: #<?= $rekam_medis['id_rekam_medis'] ?></h4>
           <div class="heading-elements d-flex" style="gap:10px;">
+            <?php if (session()->get('id_level') == 1): // Admin only ?>
+            <button onclick="window.print()" class="btn btn-outline-secondary font-weight-bold no-print">
+              <i class="la la-print"></i> Cetak Struk
+            </button>
+            <?php endif; ?>
             <?php if (session()->get('id_level') == 3): ?>
             <a href="<?= base_url('resep/tambah/'.$rekam_medis['id_rekam_medis']) ?>" class="btn btn-success font-weight-bold">
               <i class="la la-plus-circle"></i> Buat Resep Obat
@@ -59,14 +89,6 @@
                   <tr>
                     <th>No. Telepon</th>
                     <td>: <?= esc($rekam_medis['no_telp'] ?? '-') ?></td>
-                  </tr>
-                  <tr>
-                    <th>Golongan Darah</th>
-                    <td>: <span class="badge badge-light-danger"><?= esc($rekam_medis['gol_darah'] ?? '-') ?></span></td>
-                  </tr>
-                  <tr>
-                    <th>Alergi Obat</th>
-                    <td>: <span class="text-danger font-weight-bold"><?= esc($rekam_medis['alergi_obat'] ?? 'Tidak Ada Alergi') ?></span></td>
                   </tr>
                 </table>
               </div>

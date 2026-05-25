@@ -131,13 +131,6 @@
                               <input type="text" class="form-control bg-light" value="<?= esc($pasien['alamat'] ?? '-') ?>" readonly>
                           </div>
                       </div>
-                      <!-- Golongan Darah -->
-                      <div class="form-group row align-items-center mb-0">
-                          <label class="col-sm-4 col-12 text-bold-600 text-muted pr-0 mb-0">Golongan Darah <i class="la la-lock text-muted ml-1"></i></label>
-                          <div class="col-sm-8 col-12">
-                              <input type="text" class="form-control bg-light" value="<?= esc($pasien['gol_darah'] ?: '-') ?>" readonly>
-                          </div>
-                      </div>
                   </div>
               </div>
           </div>

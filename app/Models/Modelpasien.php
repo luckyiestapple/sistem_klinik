@@ -21,11 +21,6 @@ class Modelpasien extends Model
         'status_bpjs',
         'faskes',
         'kelas_rawat',
-        'gol_darah',
-        'alergi_obat',
-        'riwayat_penyakit',
-        'kontak_darurat_nama',
-        'kontak_darurat_telp',
         'foto',
         'foto_updated_at',
     ];

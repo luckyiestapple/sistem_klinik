@@ -149,11 +149,6 @@ class Pasien extends BaseController
                 'status_bpjs'         => $this->request->getPost('status_bpjs') ?: 'Tidak Aktif',
                 'faskes'              => $this->request->getPost('faskes') ?: null,
                 'kelas_rawat'         => $this->request->getPost('kelas_rawat') ?: null,
-                'gol_darah'           => $this->request->getPost('gol_darah'),
-                'alergi_obat'         => $this->request->getPost('alergi_obat'),
-                'riwayat_penyakit'    => $this->request->getPost('riwayat_penyakit'),
-                'kontak_darurat_nama' => $this->request->getPost('kontak_darurat_nama'),
-                'kontak_darurat_telp' => $this->request->getPost('kontak_darurat_telp'),
             ];
 
             $this->model->update($id, $dataPasien);

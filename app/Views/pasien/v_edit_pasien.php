@@ -90,37 +90,8 @@
                 </div>
               </div>
 
-              <!-- Bagian 2: Informasi Medis -->
-              <h5 class="form-section text-info mt-3"><i class="la la-heartbeat"></i> 2. Informasi Medis & Alergi</h5>
-              <div class="row">
-                <div class="col-md-4 col-12">
-                  <div class="form-group">
-                    <label>Golongan Darah</label>
-                    <select name="gol_darah" class="form-control">
-                      <option value="">-- Pilih --</option>
-                      <option value="A" <?= $pasien['gol_darah'] === 'A' ? 'selected' : '' ?>>A</option>
-                      <option value="B" <?= $pasien['gol_darah'] === 'B' ? 'selected' : '' ?>>B</option>
-                      <option value="AB" <?= $pasien['gol_darah'] === 'AB' ? 'selected' : '' ?>>AB</option>
-                      <option value="O" <?= $pasien['gol_darah'] === 'O' ? 'selected' : '' ?>>O</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md-8 col-12">
-                  <div class="form-group">
-                    <label>Alergi Obat (Kosongkan jika tidak ada)</label>
-                    <input type="text" name="alergi_obat" class="form-control" value="<?= esc($pasien['alergi_obat'] ?? '') ?>">
-                  </div>
-                </div>
-                <div class="col-12">
-                  <div class="form-group">
-                    <label>Riwayat Penyakit Penting</label>
-                    <textarea name="riwayat_penyakit" class="form-control" rows="2"><?= esc($pasien['riwayat_penyakit'] ?? '') ?></textarea>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Bagian 3: Data BPJS Kesehatan -->
-              <h5 class="form-section text-info mt-3"><i class="la la-credit-card"></i> 3. BPJS Kesehatan</h5>
+              <!-- Bagian 2: Data BPJS Kesehatan -->
+              <h5 class="form-section text-info mt-3"><i class="la la-credit-card"></i> 2. BPJS Kesehatan</h5>
               <div class="row">
                 <div class="col-md-6 col-12">
                   <div class="form-group">
@@ -156,25 +127,8 @@
                 </div>
               </div>
 
-              <!-- Bagian 4: Kontak Darurat -->
-              <h5 class="form-section text-info mt-3"><i class="la la-phone-square"></i> 4. Kontak Darurat</h5>
-              <div class="row">
-                <div class="col-md-6 col-12">
-                  <div class="form-group">
-                    <label>Nama Kontak Darurat</label>
-                    <input type="text" name="kontak_darurat_nama" class="form-control" value="<?= esc($pasien['kontak_darurat_nama'] ?? '') ?>">
-                  </div>
-                </div>
-                <div class="col-md-6 col-12">
-                  <div class="form-group">
-                    <label>No. HP Kontak Darurat</label>
-                    <input type="text" name="kontak_darurat_telp" class="form-control" value="<?= esc($pasien['kontak_darurat_telp'] ?? '') ?>">
-                  </div>
-                </div>
-              </div>
-
-              <!-- Bagian 5: Akun Login Pasien -->
-              <h5 class="form-section text-info mt-3"><i class="la la-key"></i> 5. Akun Portal Pasien</h5>
+              <!-- Bagian 3: Akun Portal Pasien -->
+              <h5 class="form-section text-info mt-3"><i class="la la-key"></i> 3. Akun Portal Pasien</h5>
               <?php if ($has_account): ?>
                 <div class="alert alert-success font-small-3">
                   <i class="la la-check-circle"></i>

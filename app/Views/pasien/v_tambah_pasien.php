@@ -66,35 +66,6 @@
                 </div>
               </div>
 
-              <!-- Bagian 2: Informasi Medis -->
-              <h5 class="form-section text-info mt-3"><i class="la la-heartbeat"></i> 2. Informasi Medis & Alergi</h5>
-              <div class="row">
-                <div class="col-md-4 col-12">
-                  <div class="form-group">
-                    <label>Golongan Darah</label>
-                    <select name="gol_darah" class="form-control">
-                      <option value="">-- Pilih --</option>
-                      <option value="A" <?= old('gol_darah') === 'A' ? 'selected' : '' ?>>A</option>
-                      <option value="B" <?= old('gol_darah') === 'B' ? 'selected' : '' ?>>B</option>
-                      <option value="AB" <?= old('gol_darah') === 'AB' ? 'selected' : '' ?>>AB</option>
-                      <option value="O" <?= old('gol_darah') === 'O' ? 'selected' : '' ?>>O</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md-8 col-12">
-                  <div class="form-group">
-                    <label>Alergi Obat (Kosongkan jika tidak ada)</label>
-                    <input type="text" name="alergi_obat" class="form-control" placeholder="Contoh: Paracetamol, Amoxicillin, dll." value="<?= old('alergi_obat') ?>">
-                  </div>
-                </div>
-                <div class="col-12">
-                  <div class="form-group">
-                    <label>Riwayat Penyakit Penting</label>
-                    <textarea name="riwayat_penyakit" class="form-control" rows="2" placeholder="Contoh: Diabetes, Hipertensi, Asma, Jantung..."><?= old('riwayat_penyakit') ?></textarea>
-                  </div>
-                </div>
-              </div>
-
               <!-- Bagian 3: Data BPJS Kesehatan -->
               <h5 class="form-section text-info mt-3"><i class="la la-credit-card"></i> 3. BPJS Kesehatan</h5>
               <div class="row">
@@ -132,24 +103,7 @@
                 </div>
               </div>
 
-              <!-- Bagian 4: Kontak Darurat -->
-              <h5 class="form-section text-info mt-3"><i class="la la-phone-square"></i> 4. Kontak Darurat</h5>
-              <div class="row">
-                <div class="col-md-6 col-12">
-                  <div class="form-group">
-                    <label>Nama Kontak Darurat</label>
-                    <input type="text" name="kontak_darurat_nama" class="form-control" placeholder="Nama Kerabat / Keluarga Terdekat" value="<?= old('kontak_darurat_nama') ?>">
-                  </div>
-                </div>
-                <div class="col-md-6 col-12">
-                  <div class="form-group">
-                    <label>No. HP Kontak Darurat</label>
-                    <input type="text" name="kontak_darurat_telp" class="form-control" placeholder="Nomor Telepon Kerabat" value="<?= old('kontak_darurat_telp') ?>">
-                  </div>
-                </div>
-              </div>
-
-              <!-- Bagian 5: Akun Login Pasien (Opsional) -->
+              <!-- Bagian 4: Akun Login Pasien (Opsional) -->
               <h5 class="form-section text-info mt-3"><i class="la la-key"></i> 5. Akun Portal Pasien</h5>
               <div class="form-group">
                 <div class="custom-control custom-checkbox">

@@ -9,6 +9,15 @@
   .card-header { background: none !important; color: #000 !important; }
   body { font-size: 12px; }
   .print-header { display: block !important; }
+  
+  /* Make status badges solid black on print */
+  .badge, .badge-success, .badge-warning, .badge-danger {
+    background: none !important;
+    color: #000 !important;
+    font-weight: bold !important;
+    border: none !important;
+    padding: 0 !important;
+  }
 }
 .print-header { display: none; }
 </style>
