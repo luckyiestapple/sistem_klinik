@@ -393,7 +393,7 @@ class DashboardPasien extends BaseController
 
         if ($user) {
             $userModel->update($user['id_user'], [
-                'password' => password_hash($password, PASSWORD_DEFAULT)
+                'password' => md5($password)
             ]);
             return redirect()->to(base_url('profil_pasien'))->with('success', 'Password berhasil diperbarui.');
         }

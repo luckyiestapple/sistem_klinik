@@ -88,7 +88,12 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
           <h4 class="card-title">Manajemen Resep & Pengeluaran Obat</h4>
-          <div class="heading-elements d-flex" style="gap:10px;">
+          <div class="heading-elements d-flex" style="gap:10px; align-items: center;">
+            <?php if (isset($total_pemasukan)): ?>
+            <div class="badge badge-success font-weight-bold p-1 text-dark" style="font-size: 1rem; border: 1px solid #16d39a; background-color: #d1f7ea !important;">
+              Total Pendapatan: Rp <?= number_format($total_pemasukan, 0, ',', '.') ?>
+            </div>
+            <?php endif; ?>
             <?php if (session()->get('id_level') == 1): // Admin only ?>
             <button onclick="window.print()" class="btn btn-outline-secondary font-weight-bold no-print">
               <i class="la la-print"></i> Cetak Laporan Harian
@@ -145,7 +150,7 @@
                         $status = $r['status'] ?? 'menunggu';
                         if ($status === 'selesai'): 
                         ?>
-                          <span class="badge badge-success">Selesai / Diambil</span>
+                          <span class="badge badge-success" style="color: black !important; font-weight: bold;">Selesai / Diambil</span>
                         <?php elseif ($status === 'diproses'): ?>
                           <span class="badge badge-warning text-white">Sedang Diproses</span>
                         <?php else: ?>

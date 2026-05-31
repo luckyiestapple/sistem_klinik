@@ -57,7 +57,7 @@
                                     </div>
                                     <?php endif; ?>
                                     <div class="card-body">
-                                        <form class="form-horizontal" action="<?= base_url('register') ?>" method="POST" novalidate>
+                                        <form class="form-horizontal" action="<?= base_url('register') ?>" method="POST">
                                             <?= csrf_field() ?>
                                             
                                             <div class="row">
@@ -90,15 +90,18 @@
                                                         </div>
                                                     </fieldset>
                                                     <fieldset class="form-group position-relative has-icon-left">
-                                                        <input type="text" class="form-control" name="username" placeholder="Username" required>
+                                                        <input type="text" class="form-control" name="username" placeholder="Username" required minlength="5" title="Username minimal 5 karakter">
                                                         <div class="form-control-position">
                                                             <i class="ft-user-check"></i>
                                                         </div>
                                                     </fieldset>
-                                                    <fieldset class="form-group position-relative has-icon-left">
-                                                        <input type="password" class="form-control" name="password" placeholder="Password" required>
+                                                    <fieldset class="form-group position-relative has-icon-left mb-1">
+                                                        <input type="password" id="password" class="form-control" name="password" placeholder="Password" required minlength="6" pattern="(?=.*\d)(?=.*[^a-zA-Z0-9]).{6,}" title="Minimal 6 karakter, mengandung angka, dan simbol" style="padding-right: 40px;">
                                                         <div class="form-control-position">
                                                             <i class="la la-key"></i>
+                                                        </div>
+                                                        <div class="position-absolute text-muted" style="top: 10px; right: 15px; cursor: pointer; z-index: 10;" onclick="const pf = document.getElementById('password'); const icon = this.querySelector('i'); if(pf.type === 'password') { pf.type = 'text'; icon.className = 'la la-eye-slash'; } else { pf.type = 'password'; icon.className = 'la la-eye'; }">
+                                                            <i class="la la-eye"></i>
                                                         </div>
                                                     </fieldset>
                                                 </div>

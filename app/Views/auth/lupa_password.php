@@ -57,7 +57,7 @@
                                     </div>
                                     <?php endif; ?>
                                     <div class="card-body">
-                                        <form class="form-horizontal" action="<?= base_url('lupa_password') ?>" method="POST" novalidate>
+                                        <form class="form-horizontal" action="<?= base_url('lupa_password') ?>" method="POST">
                                             <?= csrf_field() ?>
                                             
                                             <div class="card border-info mb-3 bg-light" style="border: 1px solid #0284c7; border-radius: 8px; background-color: #f0f9ff !important;">
@@ -93,16 +93,22 @@
                                                     <h6 class="text-warning font-weight-bold mb-2"><i class="ft-lock"></i> Kredensial Baru</h6>
                                                     
                                                     <fieldset class="form-group position-relative has-icon-left">
-                                                        <input type="password" class="form-control" name="password" placeholder="Password Baru (min 6 karakter)" required>
+                                                        <input type="password" id="password" class="form-control" name="password" placeholder="Password Baru" required minlength="6" pattern="(?=.*\d)(?=.*[^a-zA-Z0-9]).{6,}" title="Minimal 6 karakter, mengandung angka, dan simbol" style="padding-right: 40px;">
                                                         <div class="form-control-position">
                                                             <i class="la la-key"></i>
                                                         </div>
+                                                        <div class="position-absolute text-muted" style="top: 10px; right: 15px; cursor: pointer; z-index: 10;" onclick="const pf = document.getElementById('password'); const icon = this.querySelector('i'); if(pf.type === 'password') { pf.type = 'text'; icon.className = 'la la-eye-slash'; } else { pf.type = 'password'; icon.className = 'la la-eye'; }">
+                                                            <i class="la la-eye"></i>
+                                                        </div>
                                                     </fieldset>
 
-                                                    <fieldset class="form-group position-relative has-icon-left mb-0">
-                                                        <input type="password" class="form-control" name="confirm_password" placeholder="Konfirmasi Password Baru" required>
+                                                    <fieldset class="form-group position-relative has-icon-left mb-1">
+                                                        <input type="password" id="confirm_password" class="form-control" name="confirm_password" placeholder="Konfirmasi Password Baru" required minlength="6" pattern="(?=.*\d)(?=.*[^a-zA-Z0-9]).{6,}" style="padding-right: 40px;">
                                                         <div class="form-control-position">
                                                             <i class="la la-key"></i>
+                                                        </div>
+                                                        <div class="position-absolute text-muted" style="top: 10px; right: 15px; cursor: pointer; z-index: 10;" onclick="const pf = document.getElementById('confirm_password'); const icon = this.querySelector('i'); if(pf.type === 'password') { pf.type = 'text'; icon.className = 'la la-eye-slash'; } else { pf.type = 'password'; icon.className = 'la la-eye'; }">
+                                                            <i class="la la-eye"></i>
                                                         </div>
                                                     </fieldset>
                                                 </div>

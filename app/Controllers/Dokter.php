@@ -80,9 +80,16 @@ class Dokter extends BaseController
                     return redirect()->back()->withInput();
                 }
 
+                // Validate password
+                if (strlen($password) < 6 || !preg_match('/[0-9]/', $password) || !preg_match('/[^a-zA-Z0-9]/', $password)) {
+                    $db->transRollback();
+                    session()->setFlashdata('error', 'Password minimal 6 karakter, mengandung angka, dan simbol unik!');
+                    return redirect()->back()->withInput();
+                }
+
                 $userModel->insert([
                     'username'     => $username,
-                    'password'     => password_hash($password, PASSWORD_DEFAULT),
+                    'password'     => md5($password),
                     'id_level'     => 3, // Dokter
                     'id_referensi' => $idDokter,
                 ]);
@@ -158,9 +165,16 @@ class Dokter extends BaseController
                     return redirect()->back()->withInput();
                 }
 
+                // Validate password
+                if (strlen($password) < 6 || !preg_match('/[0-9]/', $password) || !preg_match('/[^a-zA-Z0-9]/', $password)) {
+                    $db->transRollback();
+                    session()->setFlashdata('error', 'Password minimal 6 karakter, mengandung angka, dan simbol unik!');
+                    return redirect()->back()->withInput();
+                }
+
                 $userModel->insert([
                     'username'     => $username,
-                    'password'     => password_hash($password, PASSWORD_DEFAULT),
+                    'password'     => md5($password),
                     'id_level'     => 3, // Dokter
                     'id_referensi' => $id,
                 ]);

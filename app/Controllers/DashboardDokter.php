@@ -278,7 +278,7 @@ class DashboardDokter extends BaseController
                 $user = $userModel->where('id_referensi', $idDokter)->where('id_level', 3)->first();
                 if ($user) {
                     $userModel->update($user['id_user'], [
-                        'password' => password_hash($password, PASSWORD_DEFAULT)
+                        'password' => md5($password)
                     ]);
                 }
             }

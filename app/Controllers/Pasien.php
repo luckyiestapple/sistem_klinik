@@ -90,6 +90,13 @@ class Pasien extends BaseController
                     return redirect()->back()->withInput();
                 }
 
+                // Validate password
+                if (strlen($password) < 6 || !preg_match('/[0-9]/', $password) || !preg_match('/[^a-zA-Z0-9]/', $password)) {
+                    $db->transRollback();
+                    session()->setFlashdata('error', 'Password minimal 6 karakter, mengandung angka, dan simbol unik!');
+                    return redirect()->back()->withInput();
+                }
+
                 $userModel->insert([
                     'username'     => $username,
                     'password'     => password_hash($password, PASSWORD_DEFAULT),
@@ -166,6 +173,13 @@ class Pasien extends BaseController
                 if ($existing) {
                     $db->transRollback();
                     session()->setFlashdata('error', 'Username sudah digunakan oleh akun lain!');
+                    return redirect()->back()->withInput();
+                }
+
+                // Validate password
+                if (strlen($password) < 6 || !preg_match('/[0-9]/', $password) || !preg_match('/[^a-zA-Z0-9]/', $password)) {
+                    $db->transRollback();
+                    session()->setFlashdata('error', 'Password minimal 6 karakter, mengandung angka, dan simbol unik!');
                     return redirect()->back()->withInput();
                 }
 

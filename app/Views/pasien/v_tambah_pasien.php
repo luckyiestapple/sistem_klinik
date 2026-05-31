@@ -123,7 +123,14 @@
                   <div class="col-md-6 col-12">
                     <div class="form-group">
                       <label>Password <span class="text-danger">*</span></label>
-                      <input type="password" name="password" id="password_field" class="form-control" placeholder="Password minimal 6 karakter">
+                      <div class="input-group">
+                        <input type="password" name="password" id="password_field" class="form-control" placeholder="Password min 6 karakter, angka, simbol" pattern="(?=.*\d)(?=.*[^a-zA-Z0-9]).{6,}" title="Minimal 6 karakter, mengandung angka, dan simbol">
+                        <div class="input-group-append">
+                          <span class="input-group-text" style="cursor: pointer;" onclick="const pf = document.getElementById('password_field'); const icon = this.querySelector('i'); if(pf.type === 'password') { pf.type = 'text'; icon.className = 'la la-eye-slash'; } else { pf.type = 'password'; icon.className = 'la la-eye'; }">
+                            <i class="la la-eye"></i>
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

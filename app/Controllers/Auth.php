@@ -13,10 +13,23 @@ class Auth extends BaseController
     {
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
+
+        // Validation for Username
+        if (strlen($username) < 5) {
+            session()->setFlashdata('error', 'Username harus minimal 5 karakter!');
+            return redirect()->to(base_url('login'));
+        }
+
+        // Validation for Password
+        if (empty($password)) {
+            session()->setFlashdata('error', 'Password wajib diisi!');
+            return redirect()->to(base_url('login'));
+        }
+
         $userModel = new UserModel();
         $user = $userModel->where('username', $username)->first();
 
-        if ($user && password_verify($password, $user['password'])) {
+        if ($user && md5($password) === $user['password']) {
             session()->set([
                 'id_user'   => $user['id_user'], 
                 'username'  => $user['username'], 
@@ -57,6 +70,21 @@ class Auth extends BaseController
 
     public function processRegister()
     {
+        $username = $this->request->getPost('username');
+        $password = $this->request->getPost('password');
+
+        // Validation for Username
+        if (strlen($username) < 5) {
+            session()->setFlashdata('error', 'Username harus minimal 5 karakter!');
+            return redirect()->to(base_url('register'))->withInput();
+        }
+
+        // Validation for Password
+        if (strlen($password) < 6 || !preg_match('/[0-9]/', $password) || !preg_match('/[^a-zA-Z0-9]/', $password)) {
+            session()->setFlashdata('error', 'Password minimal 6 karakter, mengandung angka, dan simbol unik!');
+            return redirect()->to(base_url('register'))->withInput();
+        }
+
         $db = \Config\Database::connect();
         $db->transBegin();
 
@@ -94,7 +122,7 @@ class Auth extends BaseController
 
             $dataUser = [
                 'username'      => $this->request->getPost('username'),
-                'password'      => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
+                'password'      => md5($this->request->getPost('password')),
                 'id_level'      => 2, // Level Pasien (2)
                 'id_referensi'  => $idPasien // Hubungkan ke ID Pasien
             ];
@@ -135,8 +163,8 @@ class Auth extends BaseController
             return redirect()->to(base_url('lupa_password'));
         }
 
-        if (strlen($password) < 6) {
-            session()->setFlashdata('error', 'Password minimal terdiri dari 6 karakter!');
+        if (strlen($password) < 6 || !preg_match('/[0-9]/', $password) || !preg_match('/[^a-zA-Z0-9]/', $password)) {
+            session()->setFlashdata('error', 'Password minimal 6 karakter, mengandung angka, dan simbol unik!');
             return redirect()->to(base_url('lupa_password'));
         }
 
@@ -163,7 +191,7 @@ class Auth extends BaseController
 
         // Update Password
         $userModel->update($user['id_user'], [
-            'password' => password_hash($password, PASSWORD_DEFAULT)
+            'password' => md5($password)
         ]);
 
         session()->setFlashdata('success', 'Password berhasil diubah! Silakan login dengan password baru.');

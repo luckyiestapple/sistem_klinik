@@ -53,11 +53,20 @@ class Resep extends BaseController
 
         $resep = $query->orderBy('r.tgl_resep', 'DESC')->get()->getResultArray();
 
+        // Calculate total pemasukan for 'selesai' status
+        $totalPemasukan = 0;
+        foreach ($resep as $r) {
+            if (($r['status'] ?? '') === 'selesai') {
+                $totalPemasukan += (float)$r['total_harga'];
+            }
+        }
+
         $data = [
-            'title'      => 'Daftar Resep',
-            'breadcrumb' => 'Resep',
-            'resep'      => $resep,
-            'is_admin'   => ($level == 1),
+            'title'           => 'Daftar Resep',
+            'breadcrumb'      => 'Resep',
+            'resep'           => $resep,
+            'total_pemasukan' => $totalPemasukan,
+            'is_admin'        => ($level == 1),
         ];
         return view('v_resep', $data);
     }
