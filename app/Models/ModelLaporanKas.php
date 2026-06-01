@@ -9,7 +9,7 @@ class ModelLaporanKas extends Model
     protected $table            = 'v_laporan_kas';
     protected $returnType       = 'array';
 
-    public function getLaporanKas($tipe = null, $tgl_mulai = null, $tgl_akhir = null, $id_admin = null)
+    public function getLaporanKas($tipe = null, $tgl_mulai = null, $tgl_akhir = null)
     {
         $builder = $this->builder();
         if ($tipe) {
@@ -18,9 +18,6 @@ class ModelLaporanKas extends Model
         if ($tgl_mulai && $tgl_akhir) {
             $builder->where("tanggal >=", $tgl_mulai);
             $builder->where("tanggal <=", $tgl_akhir);
-        }
-        if ($id_admin) {
-            $builder->where('id_user', $id_admin);
         }
         $builder->orderBy('tanggal', 'DESC');
         return $builder->get()->getResultArray();
