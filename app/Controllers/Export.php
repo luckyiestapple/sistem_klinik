@@ -58,7 +58,7 @@ class Export extends BaseController
         $sheet2->setCellValue('B1', 'Tipe');
         $sheet2->setCellValue('C1', 'Keterangan');
         $sheet2->setCellValue('D1', 'Nominal');
-        $sheet2->setCellValue('E1', 'User Input');
+
 
         $rowKas = 2;
         foreach ($dataKas as $kas) {
@@ -68,7 +68,7 @@ class Export extends BaseController
                 $sheet2->setCellValue('B' . $rowKas, ucfirst($kas['tipe']));
                 $sheet2->setCellValue('C' . $rowKas, $kas['keterangan']);
                 $sheet2->setCellValue('D' . $rowKas, $kas['nominal']);
-                $sheet2->setCellValue('E' . $rowKas, $kas['nama_user']); // assuming column is named nama_user now
+
                 $rowKas++;
             }
         }
