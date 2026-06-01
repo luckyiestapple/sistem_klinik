@@ -35,9 +35,7 @@
     </tr>
     <tr>
         <td><strong>Nama Obat</strong></td>
-        <td>: <?= $restock['nama_obat'] ?></td>
-        <td><strong>Admin/User</strong></td>
-        <td>: <?= $restock['username'] ?></td>
+        <td colspan="3">: <?= $restock['nama_obat'] ?></td>
     </tr>
 </table>
 
@@ -63,7 +61,7 @@
 <div class="footer">
     <p>Petugas Restock / Apoteker,</p>
     <br><br><br>
-    <p>( <?= $restock['username'] ?> )</p>
+    <p>( .................................... )</p>
 </div>
 
 </body>

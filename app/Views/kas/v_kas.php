@@ -60,16 +60,7 @@
                     <label>Tgl Akhir</label>
                     <input type="date" name="tgl_akhir" class="form-control" value="<?= $tgl_akhir ?>">
                 </div>
-                <div class="col-md-2">
-                    <label>Users</label>
-                    <select name="id_admin" class="form-control">
-                        <option value="">Semua</option>
-                        <?php foreach($admins as $admin): ?>
-                            <option value="<?= $admin['id_user'] ?>" <?= $id_admin == $admin['id_user'] ? 'selected' : '' ?>><?= $admin['username'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="col-md-1 d-flex align-items-end">
+                <div class="col-md-3 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100">Filter</button>
                 </div>
             </form>
@@ -96,7 +87,6 @@
                     <th>Tipe</th>
                     <th>Keterangan</th>
                     <th>Nominal</th>
-                    <th><b>Users</b></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -114,11 +104,10 @@
                       </td>
                       <td><?= esc($row['keterangan']) ?></td>
                       <td>Rp <?= number_format($row['nominal'], 0, ',', '.') ?></td>
-                      <td><?= esc($row['nama_user']) ?></td>
                     </tr>
                     <?php endforeach; ?>
                   <?php else: ?>
-                    <tr><td colspan="6" class="text-center">Belum ada transaksi.</td></tr>
+                    <tr><td colspan="5" class="text-center">Belum ada transaksi.</td></tr>
                   <?php endif; ?>
                 </tbody>
               </table>
