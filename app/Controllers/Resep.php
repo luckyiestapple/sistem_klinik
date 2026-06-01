@@ -41,10 +41,24 @@ class Resep extends BaseController
         $level = session()->get('id_level');
         $idReferansi = session()->get('id_referensi');
 
+        $tanggal = $this->request->getGet('tanggal');
+        $bulan = $this->request->getGet('bulan');
+        $tahun = $this->request->getGet('tahun');
+
         $query = $this->db->table('tb_resep r')
             ->select('r.*, p.nama AS nama_pasien, p.status_bpjs, d.nama AS nama_dokter, d.spesialisasi')
             ->join('tb_pasien p', 'p.id_pasien = r.id_pasien')
             ->join('tb_dokter d', 'd.id_dokter = r.id_dokter');
+
+        if (!empty($tanggal)) {
+            $query->where('DAY(r.tgl_resep)', $tanggal);
+        }
+        if (!empty($bulan)) {
+            $query->where('MONTH(r.tgl_resep)', $bulan);
+        }
+        if (!empty($tahun)) {
+            $query->where('YEAR(r.tgl_resep)', $tahun);
+        }
 
         if ($level == 3) {
             // Dokter only sees their own prescriptions
@@ -67,6 +81,9 @@ class Resep extends BaseController
             'resep'           => $resep,
             'total_pemasukan' => $totalPemasukan,
             'is_admin'        => ($level == 1),
+            'filter_tanggal'  => $tanggal,
+            'filter_bulan'    => $bulan,
+            'filter_tahun'    => $tahun,
         ];
         return view('v_resep', $data);
     }
@@ -164,6 +181,7 @@ class Resep extends BaseController
             $idResep = $this->model->insert([
                 'id_pasien'   => $rm['id_pasien'],
                 'id_dokter'   => $rm['id_dokter'],
+                'id_user'     => session()->get('id_user'),
                 'tgl_resep'   => date('Y-m-d'),
                 'total_harga' => $total,
                 'status'      => 'menunggu', // default status

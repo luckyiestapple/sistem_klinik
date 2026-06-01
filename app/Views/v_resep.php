@@ -61,7 +61,18 @@
   <h3 class="font-weight-bold">KLINIK SEHAT</h3>
   <p class="mb-0">Jl. Kesehatan No. 1 | Telp: (021) 000-0000</p>
   <hr>
-  <h4 class="font-weight-bold">LAPORAN HARIAN TRANSAKSI & RESEP OBAT</h4>
+  <h4 class="font-weight-bold">LAPORAN TRANSAKSI & RESEP OBAT</h4>
+  <p class="mb-0">
+    Periode: 
+    <?php
+    $namaBulan = [1=>'Januari', 2=>'Februari', 3=>'Maret', 4=>'April', 5=>'Mei', 6=>'Juni', 7=>'Juli', 8=>'Agustus', 9=>'September', 10=>'Oktober', 11=>'November', 12=>'Desember'];
+    $periode = [];
+    if (!empty($filter_tanggal)) $periode[] = $filter_tanggal;
+    if (!empty($filter_bulan)) $periode[] = $namaBulan[$filter_bulan] ?? $filter_bulan;
+    if (!empty($filter_tahun)) $periode[] = $filter_tahun;
+    echo !empty($periode) ? implode(' ', $periode) : 'Semua Waktu';
+    ?>
+  </p>
   <p class="mb-0">Tanggal Cetak: <?= date('d F Y') ?></p>
 </div>
 
@@ -83,6 +94,50 @@
   </div>
   <?php endif; ?>
 
+  <div class="row no-print mb-2">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">Filter Laporan</h4>
+        </div>
+        <div class="card-body">
+            <form action="" method="GET" class="row">
+                <div class="col-md-3">
+                    <label>Tanggal</label>
+                    <select name="tanggal" class="form-control">
+                        <option value="">Semua Tanggal</option>
+                        <?php for($i=1; $i<=31; $i++): ?>
+                            <option value="<?= $i ?>" <?= (isset($filter_tanggal) && $filter_tanggal == $i) ? 'selected' : '' ?>><?= $i ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Bulan</label>
+                    <select name="bulan" class="form-control">
+                        <option value="">Semua Bulan</option>
+                        <?php foreach($namaBulan as $k => $v): ?>
+                            <option value="<?= $k ?>" <?= (isset($filter_bulan) && $filter_bulan == $k) ? 'selected' : '' ?>><?= $v ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Tahun</label>
+                    <select name="tahun" class="form-control">
+                        <option value="">Semua Tahun</option>
+                        <?php for($i=date('Y')-2; $i<=date('Y')+1; $i++): ?>
+                            <option value="<?= $i ?>" <?= (isset($filter_tahun) && $filter_tahun == $i) ? 'selected' : '' ?>><?= $i ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100"><i class="la la-filter"></i> Filter</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="row">
     <div class="col-12">
       <div class="card">
@@ -96,7 +151,7 @@
             <?php endif; ?>
             <?php if (session()->get('id_level') == 1): // Admin only ?>
             <button onclick="window.print()" class="btn btn-outline-secondary font-weight-bold no-print">
-              <i class="la la-print"></i> Cetak Laporan Harian
+              <i class="la la-print"></i> Cetak Laporan
             </button>
             <?php endif; ?>
             <?php if (session()->get('id_level') == 3): ?>
@@ -159,8 +214,13 @@
                       </td>
                       <td>
                         <a href="<?= base_url('resep/detail/'.$r['id_resep']) ?>"
-                           class="btn btn-sm btn-info text-white" title="Lihat Detail & Proses">
+                           class="btn btn-sm btn-info text-white mb-1" title="Lihat Detail & Proses">
                            <i class="la la-eye"></i> Detail / Proses
+                        </a>
+                        <br>
+                        <a href="<?= base_url('export/invoicePdf/'.$r['id_resep']) ?>" target="_blank"
+                           class="btn btn-sm btn-secondary text-white" title="Cetak Invoice PDF">
+                           <i class="la la-file-pdf-o"></i> Cetak Invoice
                         </a>
                       </td>
                     </tr>

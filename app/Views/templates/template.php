@@ -140,6 +140,17 @@
                         <i class="ft-package"></i><span class="menu-title">Data Obat</span>
                     </a>
                 </li>
+                <li class="nav-item <?= (current_url() == base_url('restock')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('restock') ?>">
+                        <i class="ft-download"></i><span class="menu-title">Restock Obat</span>
+                    </a>
+                </li>
+
+                <li class="nav-item <?= (current_url() == base_url('kas')) ? 'active' : '' ?>">
+                    <a href="<?= base_url('kas') ?>">
+                        <i class="ft-credit-card"></i><span class="menu-title">Laporan Kas</span>
+                    </a>
+                </li>
                 <li class="nav-item <?= (current_url() == base_url('admin/antrian')) ? 'active' : '' ?>">
                     <a href="<?= base_url('admin/antrian') ?>">
                         <i class="ft-list"></i><span class="menu-title">Kelola Antrian</span>

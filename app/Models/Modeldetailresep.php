@@ -25,7 +25,7 @@ class Modeldetailresep extends Model
     public function getDetailByResep(int $idResep)
     {
         return $this->db->table('tb_resepdetail dr')
-            ->select('dr.*, o.nama_obat, o.kode_obat, (dr.jumlah * dr.harga) AS subtotal')
+            ->select('dr.*, o.nama_obat, o.satuan, o.kode_obat, (dr.jumlah * dr.harga) AS subtotal')
             ->join('tb_obat o', 'o.kode_obat = dr.kode_obat')
             ->where('dr.kode_resep', $idResep)
             ->get()->getResultArray();

@@ -28,4 +28,16 @@ class Modelobat extends Model
     {
         return $this->where('stok <', $threshold)->findAll();
     }
+
+    public function reduceStock($kode_obat, $jumlah)
+    {
+        $db = \Config\Database::connect();
+        $db->query("UPDATE tb_obat SET stok = stok - ? WHERE kode_obat = ?", [$jumlah, $kode_obat]);
+    }
+
+    public function addStock($kode_obat, $jumlah)
+    {
+        $db = \Config\Database::connect();
+        $db->query("UPDATE tb_obat SET stok = stok + ? WHERE kode_obat = ?", [$jumlah, $kode_obat]);
+    }
 }

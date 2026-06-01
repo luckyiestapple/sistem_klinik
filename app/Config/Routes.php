@@ -54,6 +54,19 @@ $routes->group('', ['filter' => 'adminAuth'], function($routes) {
     // Antrian (Admin)
     $routes->get('/admin/antrian', 'Dashboard::antrian');
     $routes->post('/admin/antrian/update_status/(:any)', 'Dashboard::updateAntrianStatus/$1');
+
+    // Laporan Kas, Restock, Transaksi
+    $routes->get('/kas', 'Kas::index');
+    
+    $routes->get('/restock', 'Restock::index');
+    $routes->get('/restock/tambah', 'Restock::tambah');
+    $routes->post('/restock/simpan', 'Restock::simpan');
+    $routes->get('/restock/hapus/(:any)', 'Restock::hapus/$1');
+
+    $routes->get('/transaksipasien', 'TransaksiPasien::index');
+    $routes->get('/transaksipasien/tambah', 'TransaksiPasien::tambah');
+    $routes->post('/transaksipasien/simpan', 'TransaksiPasien::simpan');
+    $routes->get('/transaksipasien/nota/(:any)', 'TransaksiPasien::nota/$1');
 });
 
 // ── Dokter-only Routes (Level 4) ──────────────────────────
@@ -104,4 +117,9 @@ $routes->group('', ['filter' => 'adminOrDokterAuth'], function($routes) {
     $routes->get('/resep',                     'Resep::index');
     $routes->get('/resep/detail/(:any)',        'Resep::detail/$1');
     $routes->post('/resep/update_status/(:any)', 'Resep::updateStatus/$1');
+
+    // Export (Excel & PDF)
+    $routes->get('/export/excel',               'Export::excel');
+    $routes->get('/export/invoicePdf/(:any)',   'Export::invoicePdf/$1');
+    $routes->get('/export/restockPdf/(:any)',   'Export::restockPdf/$1');
 });
