@@ -11,12 +11,67 @@
     <link rel="stylesheet" type="text/css" href="<?= base_url('app-assets/css/components.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?= base_url('app-assets/css/pages/login-register.css') ?>">
     <style>
-        .bg-custom-image {
-            background-image: url('<?= base_url('app-assets/images/backgrounds/bg-2.jpg') ?>');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+        .bg-custom-blue {
+            background: linear-gradient(-45deg, #4A00E0, #8E2DE2, #00C9FF, #92FE9D);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             background-attachment: fixed;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .aesthetic-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .btn-primary-blue {
+            background: linear-gradient(45deg, #4A00E0, #00C9FF);
+            border: none;
+            color: white !important;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary-blue:hover {
+            box-shadow: 0 8px 20px rgba(74, 0, 224, 0.4);
+            transform: translateY(-2px);
+            background: linear-gradient(45deg, #00C9FF, #4A00E0);
+        }
+
+        .btn-back {
+            background-color: rgba(74, 0, 224, 0.1);
+            color: #4A00E0 !important;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background-color: #4A00E0;
+            color: white !important;
+        }
+
+        .text-primary-blue {
+            color: #4A00E0 !important;
+        }
+        
+        .form-control {
+            border-radius: 10px;
+        }
+        
+        .form-control:focus {
+            border-color: #00C9FF;
+            box-shadow: 0 0 0 0.2rem rgba(0, 201, 255, 0.25);
         }
         body.blank-page {
             overflow-y: auto !important;
@@ -29,22 +84,22 @@
         }
     </style>
 </head>
-<body class="vertical-layout vertical-menu 1-column bg-custom-image blank-page">
+<body class="vertical-layout vertical-menu 1-column bg-custom-blue blank-page">
     <div class="app-content content">
         <div class="content-wrapper">
             <div class="content-body">
                 <section class="flexbox-container">
                     <div class="col-12 d-flex align-items-center justify-content-center">
                         <div class="col-md-8 col-11 box-shadow-2 p-0 my-3">
-                            <div class="card border-grey border-lighten-3 px-1 py-1 m-0">
+                            <div class="card aesthetic-card px-1 py-1 m-0">
                                 <div class="card-header border-0 pb-0">
                                     <div class="text-left mb-1">
-                                        <a href="<?= base_url('login') ?>" class="btn btn-sm btn-warning font-weight-bold" style="border-radius:20px; color:#fff !important;">
+                                        <a href="<?= base_url('login') ?>" class="btn btn-sm btn-back font-weight-bold px-2">
                                             <i class="ft-arrow-left"></i> Kembali ke Login
                                         </a>
                                     </div>
                                     <div class="card-title text-center">
-                                        <h3 class="mt-1 font-weight-bold text-info">Sistem Klinik Terpadu</h3>
+                                        <h3 class="mt-1 font-weight-bold text-primary-blue">Sistem Klinik Terpadu</h3>
                                     </div>
                                     <h6 class="card-subtitle line-on-side text-muted text-center font-small-3 pt-2">
                                         <span>Daftar Pasien Baru</span>
@@ -167,7 +222,7 @@
                                                 </div>
                                             </div>
                                             
-                                            <button type="submit" class="btn btn-outline-info btn-block"><i class="ft-user-plus"></i> Daftar</button>
+                                            <button type="submit" class="btn btn-primary-blue btn-block py-2 mt-1"><i class="ft-user-plus"></i> Daftar</button>
                                         </form>
                                     </div>
                                 </div>

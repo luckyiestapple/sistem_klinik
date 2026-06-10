@@ -46,7 +46,7 @@
                       <td><?= date('d/m/Y', strtotime($r['tanggal'])) ?></td>
                       <td><?= esc($r['nama_obat']) ?></td>
                       <td><?= esc($r['keterangan']) ?></td>
-                      <td><?= $r['jumlah'] ?></td>
+                      <td><?= $r['jumlah'] ?> <?= esc($r['satuan'] ?? '') ?></td>
                       <td>Rp <?= number_format($r['harga_beli'], 0, ',', '.') ?></td>
                       <td>Rp <?= number_format($r['total_biaya'], 0, ',', '.') ?></td>
                       <td>
